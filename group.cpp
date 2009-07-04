@@ -28,6 +28,7 @@ Group::Group() {
   
   this->dataPtsSize = 1;
   this->dataPts = annAllocPts(this->dataPtsSize, 3);
+  color_off = 10;
 }
 
 Group::~Group() {
@@ -81,6 +82,29 @@ void Group::Move(float timediff) {
   this->destroyKNN();
 }
 
+// float fmod(float num, float div) {
+//   float neg = 1;
+//   if(num < 0) {
+//     num *= -1;
+//     neg = -1;
+//   }
+//   while(num > div) {
+//     num -= div;
+//   }
+//   return num * neg;
+// }
+
+float f(float n) {
+  float x = fmod(n, 3.0f);
+  if(x > 1 && x < 2) {
+    return 2-x;
+  } else if(x > 0 && x <= 1) {
+    return x;
+  } else {
+    return 0;
+  }
+}
+
 void Group::figureVelocities() {
 	int cnt = 0;
 	float len;
@@ -106,11 +130,15 @@ void Group::figureVelocities() {
 		}
 		
     // generate color from velocity
+    p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
+    p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
+    p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+    
+/*    // generate color from velocity
 		p->r = fabs(p->vel.x);
 		p->g = fabs(p->vel.y);
-		p->b = fabs(p->vel.z);
+		p->b = fabs(p->vel.z);*/
 	}
-//	cout << cnt << endl;
 }
 
 Vector3f Group::avoidTouching(particle* p) {
@@ -145,7 +173,6 @@ void Group::resizeDataPts() {
 }
 
 void Group::buildKNN() {
-//   dataPts = annAllocPts(this->size(), 3);
   this->resizeDataPts();
   int i = 0;
   for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
@@ -163,12 +190,12 @@ void Group::destroyKNN() {
 
 // uses nearest neighbors
 Vector3f Group::moveToNeighborsCenter(particle* p) {
-	static list<ppair> neighbors;
+	static vector<ppair> neighbors;
   neighbors.clear();
 	getNNearestNeighbors(&neighbors, p, 5);
 	Vector3f center;
 	Vector3f veltotal;
-	for(list<ppair>::iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
+	for(vector<ppair>::iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
 		center += i->point->pos;
 		veltotal += i->point->vel;
 	}
@@ -199,11 +226,13 @@ priority_queue<ppair> Group::calcDistances(particle* p1) {
 	return distances;
 }
 
-void Group::getNNearestNeighbors(list<ppair>* neighbors, particle* p1, int num) {
+void Group::getNNearestNeighbors(vector<ppair>* neighbors, particle* p1, int num) {
   if(num > MAX_KNN_SIZE) {
     printf("knn searching for too many points");
     exit(1);
   }
+  
+  neighbors->reserve(num);
   
   kdTree->annkSearch(             // search
         (ANNcoord*)&p1->pos,      // query point
@@ -213,7 +242,8 @@ void Group::getNNearestNeighbors(list<ppair>* neighbors, particle* p1, int num) 
         0);                       // error bound
   
   for(int i = 0; i < num; ++i) {
-    neighbors->push_back(ppair(sqrt(this->dists[i]), (*this)[this->nnIdx[i]]));
+    (*neighbors)[i].distance = this->dists[i];
+    (*neighbors)[i].point = (*this)[this->nnIdx[i]];
   }
 }
 

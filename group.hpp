@@ -18,6 +18,11 @@ using namespace std;
 struct ppair {
 	float distance;
 	particle* point;
+  
+  ppair() {
+    this->distance = 0;
+    this->point = 0;
+  }
 	
 	ppair(float _distance, particle* _point) {
 		this->distance = _distance;
@@ -42,7 +47,7 @@ public:
 	Vector3f stayInBounds(particle* p);
 	priority_queue< ppair > calcDistances(particle* p1);
 	void getNearestNeighbors(list<ppair>*, particle* p1, float max_dist);
-	void getNNearestNeighbors(list<ppair>*, particle* p1, int max_dist);
+	void getNNearestNeighbors(vector<ppair>*, particle* p1, int max_dist);
 	Vector3f avoidTouching(particle* p);
 
 	priority_queue<ppair> recent_distances;
@@ -55,6 +60,7 @@ public:
 	float speed;
 	bool pause_movement;
   bool controlled;
+  float color_off;
   
   float vel_render_scale_x;
   float vel_render_scale_y;

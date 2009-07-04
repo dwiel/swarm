@@ -201,32 +201,78 @@ void check_keys (float timediff)
   
   if (keys[SDLK_d]) print_debug();
 
+  // maybe wait and do this in Lua or python ...
+  // controls.push_back(Control(&scene.speed, "scene speed", Linear(SDLK_s, 0.1f));
+
   if (keys[SDLK_s] && keys[SDLK_UP]) {
-    scene.speed += scene.speed * 0.001f * timediff * 100;
+    scene.speed += scene.speed * 0.1f * timediff;
     cout << "scene speed " << scene.speed << endl;
   }
   if (keys[SDLK_s] && keys[SDLK_DOWN]) {
-    scene.speed -= scene.speed * 0.001f * timediff * 100;
+    scene.speed -= scene.speed * 0.1f * timediff;
+    cout << "scene speed " << scene.speed << endl;
+  }
+  if (keys[SDLK_s] && keys[SDLK_PAGEUP]) {
+    scene.speed += scene.speed * 1.0f * timediff;
+    cout << "scene speed " << scene.speed << endl;
+  }
+  if (keys[SDLK_s] && keys[SDLK_PAGEDOWN]) {
+    scene.speed -= scene.speed * 1.0f * timediff;
     cout << "scene speed " << scene.speed << endl;
   }
   
   if (keys[SDLK_b] && keys[SDLK_UP]) {
+    groups[0].vel_render_scale_x += groups[0].vel_render_scale_x * 0.1f * timediff;
+    groups[0].vel_render_scale_y += groups[0].vel_render_scale_y * 0.1f * timediff;
+    cout << "vel_render_scale: " << groups[0].vel_render_scale_x << endl;
+  }
+  if (keys[SDLK_b] && keys[SDLK_DOWN]) {
+    groups[0].vel_render_scale_x -= groups[0].vel_render_scale_x * 0.1f * timediff;
+    groups[0].vel_render_scale_y -= groups[0].vel_render_scale_y * 0.1f * timediff;
+    cout << "vel_render_scale: " << groups[0].vel_render_scale_x << endl;
+  }
+  if (keys[SDLK_b] && keys[SDLK_PAGEUP]) {
     groups[0].vel_render_scale_x += groups[0].vel_render_scale_x * 1.0f * timediff;
     groups[0].vel_render_scale_y += groups[0].vel_render_scale_y * 1.0f * timediff;
     cout << "vel_render_scale: " << groups[0].vel_render_scale_x << endl;
   }
-  if (keys[SDLK_b] && keys[SDLK_DOWN]) {
+  if (keys[SDLK_b] && keys[SDLK_PAGEDOWN]) {
     groups[0].vel_render_scale_x -= groups[0].vel_render_scale_x * 1.0f * timediff;
     groups[0].vel_render_scale_y -= groups[0].vel_render_scale_y * 1.0f * timediff;
     cout << "vel_render_scale: " << groups[0].vel_render_scale_x << endl;
   }
   
-	if (keys[SDLK_PAGEUP]) {
+  if (keys[SDLK_c] && keys[SDLK_UP]) {
+    groups[0].color_off += 1.0f * timediff;
+    cout << "color_off: " << groups[0].color_off << endl;
+  }
+  if (keys[SDLK_c] && keys[SDLK_DOWN]) {
+    groups[0].color_off -= 1.0f * timediff;
+    cout << "color_off: " << groups[0].color_off << endl;
+  }
+  if (keys[SDLK_c] && keys[SDLK_PAGEUP]) {
+    groups[0].color_off += 10.0f * timediff;
+    cout << "color_off: " << groups[0].color_off << endl;
+  }
+  if (keys[SDLK_c] && keys[SDLK_PAGEDOWN]) {
+    groups[0].color_off -= 10.0f * timediff;
+    cout << "color_off: " << groups[0].color_off << endl;
+  }
+  
+	if (keys[SDLK_z] && keys[SDLK_UP]) {
     scene.zoom += 1.0f * timediff;				// Zoom In
     cout << "scene zoom: " << scene.zoom << endl;
   }
-	if (keys[SDLK_PAGEDOWN]) {
+	if (keys[SDLK_z] && keys[SDLK_DOWN]) {
     scene.zoom -= 1.0f * timediff;			// Zoom Out
+    cout << "scene zoom: " << scene.zoom << endl;
+  }
+  if (keys[SDLK_z] && keys[SDLK_PAGEUP]) {
+    scene.zoom += 10.0f * timediff;        // Zoom In
+    cout << "scene zoom: " << scene.zoom << endl;
+  }
+  if (keys[SDLK_z] && keys[SDLK_PAGEDOWN]) {
+    scene.zoom -= 10.0f * timediff;      // Zoom Out
     cout << "scene zoom: " << scene.zoom << endl;
   }
 }
