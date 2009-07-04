@@ -20,8 +20,8 @@ Group::Group() {
 	this->speed = 20.0f;
 	this->scene = 0;
   this->controlled = false;
-  this->vel_render_scale_x = 0.0001;
-  this->vel_render_scale_y = 0.0001;
+  this->vel_render_scale_x = 0.01;
+  this->vel_render_scale_y = 0.01;
 
   this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
@@ -98,11 +98,8 @@ void Group::figureVelocities() {
 	float len;
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;
-		// TODO: this doesn't work because later algorithms pop() off the queue and
-		// expect nobody to do the same.
-// 		recent_distances = calcDistances(p);
-		
-		p->vel += moveToNeighborsCenter(p) * 0.001;
+
+    p->vel += moveToNeighborsCenter(p) * 10.0;
  		p->vel += stayInBounds(p) * 0.001;
 		// p->vel += avoidTouching(p) * 0.01;
 		
@@ -117,7 +114,7 @@ void Group::figureVelocities() {
 			++cnt;
 		}
 		
-    // generate color from velocity
+    // generate color from velocity and color offset
     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);

@@ -31,7 +31,7 @@ using namespace std;
 #include "particle.hpp"
 #include "group.hpp"
 
-#define	MAX_PARTICLES 10000          // Number Of Particles To Create
+#define	MAX_PARTICLES 500          // Number Of Particles To Create
 
 bool keys[512];
 
@@ -203,6 +203,10 @@ void check_keys (float timediff)
 
   // maybe wait and do this in Lua or python ...
   // controls.push_back(Control(&scene.speed, "scene speed", Linear(SDLK_s, 0.1f));
+  
+  // TODO: control amount velocity affects shape
+  // TODO: control weight on nearest neighbors
+  // TODO: control number of particles in swarm
 
   if (keys[SDLK_s] && keys[SDLK_UP]) {
     scene.speed += scene.speed * 0.1f * timediff;
