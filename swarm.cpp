@@ -72,7 +72,7 @@ int LoadGLTextures()							// Load Bitmap And Convert To A Texture
 	GLubyte *tex = new GLubyte[32 * 32 * 3];
 	FILE *tf;
 
-	tf = fopen ( "Data/Particle.raw", "rb" );
+	tf = fopen ( "data/particle.raw", "rb" );
 	fread ( tex, 1, 32 * 32 * 3, tf );
 	fclose ( tf );
 
@@ -211,13 +211,13 @@ void check_keys (float timediff)
   }
   
   if (keys[SDLK_b] && keys[SDLK_UP]) {
-    groups[0].vel_render_scale_x *= 1.01f * timediff;
-    groups[0].vel_render_scale_y *= 1.01f * timediff;
+    groups[0].vel_render_scale_x += groups[0].vel_render_scale_x * 1.0f * timediff;
+    groups[0].vel_render_scale_y += groups[0].vel_render_scale_y * 1.0f * timediff;
     cout << "vel_render_scale: " << groups[0].vel_render_scale_x << endl;
   }
   if (keys[SDLK_b] && keys[SDLK_DOWN]) {
-    groups[0].vel_render_scale_x *= 0.99f * timediff;
-    groups[0].vel_render_scale_y *= 0.99f * timediff;
+    groups[0].vel_render_scale_x -= groups[0].vel_render_scale_x * 1.0f * timediff;
+    groups[0].vel_render_scale_y -= groups[0].vel_render_scale_y * 1.0f * timediff;
     cout << "vel_render_scale: " << groups[0].vel_render_scale_x << endl;
   }
   

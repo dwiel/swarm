@@ -25,6 +25,9 @@ Group::Group() {
 
   this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
+  
+  this->dataPtsSize = 1;
+  this->dataPts = annAllocPts(this->dataPtsSize, 3);
 }
 
 Group::~Group() {
@@ -42,8 +45,8 @@ void Group::DrawParticles() {
 		glColor4f(p->r, p->g, p->b, p->life);
 		
 		// optionally elongate particles based on velocity
- 		float vx = 0.5f + p->vel.x*this->vel_render_scale_x;
- 		float vy = 0.5f + p->vel.y*this->vel_render_scale_y;
+ 		float vx = p->vel.x*this->vel_render_scale_x;
+ 		float vy = p->vel.y*this->vel_render_scale_y;
 		
 		glBegin(GL_TRIANGLE_STRIP);
 			glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z);	// Top Right
@@ -58,6 +61,8 @@ void Group::DrawParticles() {
 // update the position based on the scene->speed, the group->speed, each 
 // particles' speed and the time elapsed since the previous movement
 void Group::Move(float timediff) {
+  this->buildKNN();
+  
 	this->figureVelocities();
 	
 	float gspeed;
@@ -77,8 +82,6 @@ void Group::Move(float timediff) {
 }
 
 void Group::figureVelocities() {
-  this->buildKNN();
-  
 	int cnt = 0;
 	float len;
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
@@ -133,16 +136,25 @@ Vector3f Group::stayInBounds(particle* p) {
 	}
 }
 
+void Group::resizeDataPts() {
+  if(this->size() > this->dataPtsSize) {
+    delete [] this->dataPts;
+    this->dataPtsSize = this->size();
+    this->dataPts = annAllocPts(this->dataPtsSize, 3);
+  }
+}
+
 void Group::buildKNN() {
-  dataPts = annAllocPts(this->size(), 3);
+//   dataPts = annAllocPts(this->size(), 3);
+  this->resizeDataPts();
   int i = 0;
   for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
     particle* p = *iter;
-    dataPts[i] = (ANNcoord*)&p->pos;
+    this->dataPts[i] = (ANNcoord*)&p->pos;
     ++i;
   }
   
-  kdTree = new ANNkd_tree(dataPts, this->size(), 3);
+  kdTree = new ANNkd_tree(this->dataPts, this->size(), 3);
 }
 
 void Group::destroyKNN() {
@@ -203,16 +215,6 @@ void Group::getNNearestNeighbors(list<ppair>* neighbors, particle* p1, int num) 
   for(int i = 0; i < num; ++i) {
     neighbors->push_back(ppair(sqrt(this->dists[i]), (*this)[this->nnIdx[i]]));
   }
-
-// 	priority_queue<ppair> distances = calcDistances(p1);
-// 	
-// 	list< ppair > neighbors;
-// 	for(int i = 0; i < num; ++i) {
-// 		neighbors.push_back(distances.top());
-// 		distances.pop();
-// 	}
-// 	
-// 	return neighbors;
 }
 
 // return a list of all neighbors to point p1 which are most max_dist away 
