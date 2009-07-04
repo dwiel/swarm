@@ -82,18 +82,6 @@ void Group::Move(float timediff) {
   this->destroyKNN();
 }
 
-// float fmod(float num, float div) {
-//   float neg = 1;
-//   if(num < 0) {
-//     num *= -1;
-//     neg = -1;
-//   }
-//   while(num > div) {
-//     num -= div;
-//   }
-//   return num * neg;
-// }
-
 float f(float n) {
   float x = fmod(n, 3.0f);
   if(x > 1 && x < 2) {
