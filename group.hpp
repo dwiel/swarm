@@ -64,6 +64,9 @@ public:
   
   float vel_render_scale_x;
   float vel_render_scale_y;
+  
+  float vel_render_base_size_x;
+  float vel_render_base_size_y;
 	
 	Scene *scene;
 

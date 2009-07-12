@@ -22,6 +22,8 @@ Group::Group() {
   this->controlled = false;
   this->vel_render_scale_x = 0.01;
   this->vel_render_scale_y = 0.01;
+  this->vel_render_base_size_x = 0.25;
+  this->vel_render_base_size_y = 0.25;
 
   this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
@@ -46,8 +48,11 @@ void Group::DrawParticles() {
 		glColor4f(p->r, p->g, p->b, p->life);
 		
 		// optionally elongate particles based on velocity
- 		float vx = p->vel.x*this->vel_render_scale_x;
- 		float vy = p->vel.y*this->vel_render_scale_y;
+    float vx = this->vel_render_base_size_x;
+    float vy = this->vel_render_base_size_y;
+    
+ 		vx += p->vel.x*this->vel_render_scale_x;
+ 		vy += p->vel.y*this->vel_render_scale_y;
 		
 		glBegin(GL_TRIANGLE_STRIP);
 			glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z);	// Top Right
@@ -257,4 +262,21 @@ void Group::getNearestNeighbors(list<ppair>* neighbors, particle* p1, float max_
 	
 //  	printf("distances: %d\n", distances.size());
 }
+
+
+
+
+
+// Notes
+// Nate will send:
+//   overall amplitude
+//   all sin wave frequencies
+//     
+//
+// I will send:
+//   variance
+//   average position? (not really helpful with the models created right now)
+//   
+
+
 
