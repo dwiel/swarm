@@ -25,6 +25,9 @@ Group::Group() {
   this->vel_render_base_size_x = 0.5;
   this->vel_render_base_size_y = 0.5;
   this->pos = Vector3f(0,0,0);
+  move_to_neighbor_center_weight = 0.001;
+  stay_in_bounds_weight = 0.001;
+  avoid_touching_weight = 0.001;
 
   this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
@@ -104,11 +107,11 @@ void Group::figureVelocities() {
 	float len;
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;
-    //getNNearestNeighbors(&neighbors, p, 10);
+    getNNearestNeighbors(&neighbors, p, 5);
 
-    //p->vel -= moveToNeighborsCenter(p) * 1.0;
- 		p->vel += stayInBounds(p) * 0.001;
-		//p->vel -= avoidTouching(p) * .0;
+    p->vel += moveToNeighborsCenter(p) * this->move_to_neighbor_center_weight;
+ 		p->vel += stayInBounds(p) * this->stay_in_bounds_weight;
+		p->vel += avoidTouching(p) * this->avoid_touching_weight;
 		
 		// impose maximume velocity
 		len = p->vel.length();
@@ -133,17 +136,19 @@ void Group::figureVelocities() {
 }
 
 Vector3f Group::avoidTouching(particle* p) {
-	Vector3f avoid;
+	Vector3f avoid = Vector3f(0,0,0);
 	//static list<ppair> neighbors;
   //neighbors.clear();
 	//getNearestNeighbors(&neighbors, p, 0.00f);
+  int near = 0;
 	for(vector<ppair>::iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
-    if(i->distance < 0.10f) {
+    if(i->distance < 1.0f) {
       avoid += i->point->pos - p->pos;
+      ++near;
     }
 	}
-	if(neighbors.size()) {
-		return avoid / (float)neighbors.size();
+	if(near) {
+		return avoid / (float)near;
 	} else {
 		return avoid;
 	}
@@ -197,6 +202,7 @@ Vector3f Group::moveToNeighborsCenter(particle* p) {
 	}
   
   float size = neighbors.size();
+  //cout << "size" << size;
 	if( size ) {
 		center /= size;
 		veltotal /= size;
@@ -217,7 +223,8 @@ void Group::getNNearestNeighbors(vector<ppair>* neighbors, particle* p1, int num
     exit(1);
   }
   
-  neighbors->reserve(num);
+  // TODO: is this slow?
+  neighbors->resize(num);
   
   kdTree->annkSearch(             // search
         (ANNcoord*)&p1->pos,      // query point

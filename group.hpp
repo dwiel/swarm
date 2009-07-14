@@ -68,6 +68,10 @@ public:
   float vel_render_base_size_x;
   float vel_render_base_size_y;
   
+  float move_to_neighbor_center_weight;
+  float stay_in_bounds_weight;
+  float avoid_touching_weight;
+  
   Vector3f pos;
 	
 	Scene *scene;
