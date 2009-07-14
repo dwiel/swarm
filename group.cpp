@@ -55,7 +55,7 @@ void Group::DrawParticles() {
  		vy += p->vel.y*this->vel_render_scale_y;
 		
 		glBegin(GL_TRIANGLE_STRIP);
-			glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z);	// Top Right
+			glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z); // Top Right
 			glTexCoord2d(0,1); glVertex3f(x-vx, y+vy,z); // Top Left
 			glTexCoord2d(1,0); glVertex3f(x+vx, y-vy,z); // Bottom Right
 			glTexCoord2d(0,0); glVertex3f(x-vx, y-vy,z); // Bottom Left
@@ -123,11 +123,6 @@ void Group::figureVelocities() {
     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
-    
-/*    // generate color from velocity
-		p->r = fabs(p->vel.x);
-		p->g = fabs(p->vel.y);
-		p->b = fabs(p->vel.z);*/
 	}
 }
 

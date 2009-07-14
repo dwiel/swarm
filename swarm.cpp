@@ -23,7 +23,9 @@
 
 using namespace std;
 
-#include "SDL.h"					// SDL include
+#include "SDL.h"
+
+#include "lo/lo.h"
 
 #include "vmath.h"
 
