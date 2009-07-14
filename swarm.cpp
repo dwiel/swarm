@@ -33,7 +33,7 @@ using namespace std;
 #include "particle.hpp"
 #include "group.hpp"
 
-#define	MAX_PARTICLES 500          // Number Of Particles To Create
+#define	MAX_PARTICLES 100          // Number Of Particles To Create
 
 bool keys[512];
 
@@ -135,7 +135,7 @@ int InitGL(void) {
 	boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
 
 	// initialize all particles
-	for(loop = 0; loop < MAX_PARTICLES/2; ++loop)	{
+	for(loop = 0; loop < MAX_PARTICLES; ++loop)	{
 		particles[loop].active = true;
 		particles[loop].life = 1.0f;
 		particles[loop].pos = Vector3f(normr(), normr(), normr());

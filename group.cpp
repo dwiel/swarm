@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-#define MAX_KNN_SIZE 5
+#define MAX_KNN_SIZE 10
 
 using namespace std;
 
@@ -17,13 +17,13 @@ bool operator<(const ppair& p1, const ppair& p2) {
 Group::Group() {
 	this->maximum_velocity = 2.0f;
 	this->pause_movement = false;
-	this->speed = 20.0f;
+	this->speed = 2.0f;
 	this->scene = 0;
   this->controlled = false;
   this->vel_render_scale_x = 0.01;
   this->vel_render_scale_y = 0.01;
-  this->vel_render_base_size_x = 0.25;
-  this->vel_render_base_size_y = 0.25;
+  this->vel_render_base_size_x = 0.5;
+  this->vel_render_base_size_y = 0.5;
 
   this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
@@ -103,10 +103,11 @@ void Group::figureVelocities() {
 	float len;
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;
+    getNNearestNeighbors(&neighbors, p, 10);
 
-    p->vel += moveToNeighborsCenter(p) * 10.0;
+    //p->vel -= moveToNeighborsCenter(p) * 1.0;
  		p->vel += stayInBounds(p) * 0.001;
-		// p->vel += avoidTouching(p) * 0.01;
+		//p->vel -= avoidTouching(p) * .0;
 		
 		// impose maximume velocity
 		len = p->vel.length();
@@ -115,24 +116,26 @@ void Group::figureVelocities() {
 			p->vel *= maximum_velocity;
 		}
 		
-		if(p->vel.x == 0.0f and p->vel.z == 0.0f) {
-			++cnt;
-		}
-		
     // generate color from velocity and color offset
-    p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
-    p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
-    p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+//     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
+//     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
+//     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+
+    p->r = 1;
+    p->g = 0;
+    p->b = 0;
 	}
 }
 
 Vector3f Group::avoidTouching(particle* p) {
 	Vector3f avoid;
-	static list<ppair> neighbors;
-  neighbors.clear();
-	getNearestNeighbors(&neighbors, p, 0.00f);
-	for(list<ppair>::iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
-		avoid += i->point->pos - p->pos;
+	//static list<ppair> neighbors;
+  //neighbors.clear();
+	//getNearestNeighbors(&neighbors, p, 0.00f);
+	for(vector<ppair>::iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
+    if(i->distance < 0.10f) {
+      avoid += i->point->pos - p->pos;
+    }
 	}
 	if(neighbors.size()) {
 		return avoid / (float)neighbors.size();
@@ -175,9 +178,9 @@ void Group::destroyKNN() {
 
 // uses nearest neighbors
 Vector3f Group::moveToNeighborsCenter(particle* p) {
-	static vector<ppair> neighbors;
-  neighbors.clear();
-	getNNearestNeighbors(&neighbors, p, 5);
+//	static vector<ppair> neighbors;
+//  neighbors.clear();
+//	getNNearestNeighbors(&neighbors, p, 5);
 	Vector3f center;
 	Vector3f veltotal;
 	for(vector<ppair>::iterator i = neighbors.begin(); i != neighbors.end(); ++i) {
@@ -198,17 +201,6 @@ Vector3f Group::moveToNeighborsCenter(particle* p) {
 float point_distance(particle* p1, particle* p2) {
 	Vector3f diff = p1->pos - p2->pos;
 	return sqrt(diff.dotProduct(diff));
-}
-
-priority_queue<ppair> Group::calcDistances(particle* p1) {
-	priority_queue<ppair> distances;
-	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
-		particle* p2 = *iter;
-		if(p1 != p2) {
-			distances.push(ppair(point_distance(p1, p2), p2));
-		}
-	}
-	return distances;
 }
 
 void Group::getNNearestNeighbors(vector<ppair>* neighbors, particle* p1, int num) {
@@ -232,31 +224,31 @@ void Group::getNNearestNeighbors(vector<ppair>* neighbors, particle* p1, int num
   }
 }
 
-// return a list of all neighbors to point p1 which are most max_dist away 
-// sorted by proximity 
-void Group::getNearestNeighbors(list<ppair>* neighbors, particle* p1, float max_dist) {
-	priority_queue<ppair> distances = calcDistances(p1);
-	
-	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
-		particle* p2 = *iter;
-		if(p1 != p2) {
-			distances.push(ppair(point_distance(p1, p2), p2));
-		}
-	}
-	
-	// priority_queue<ppair>::const_iterator iter = distances.begin();
-	while( true ) {
-		ppair point = distances.top();
-		if(point.distance < max_dist) {
-			neighbors->push_back(point);
-			distances.pop();
-		} else {
-			break;
-		}
-	}
-	
-//  	printf("distances: %d\n", distances.size());
-}
+// // return a list of all neighbors to point p1 which are most max_dist away 
+// // sorted by proximity 
+// void Group::getNearestNeighbors(list<ppair>* neighbors, particle* p1, float max_dist) {
+// 	priority_queue<ppair> distances = calcDistances(p1);
+// 	
+// 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
+// 		particle* p2 = *iter;
+// 		if(p1 != p2) {
+// 			distances.push(ppair(point_distance(p1, p2), p2));
+// 		}
+// 	}
+// 	
+// 	// priority_queue<ppair>::const_iterator iter = distances.begin();
+// 	while( true ) {
+// 		ppair point = distances.top();
+// 		if(point.distance < max_dist) {
+// 			neighbors->push_back(point);
+// 			distances.pop();
+// 		} else {
+// 			break;
+// 		}
+// 	}
+// 	
+// //  	printf("distances: %d\n", distances.size());
+// }
 
 
 

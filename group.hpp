@@ -70,10 +70,7 @@ public:
 	
 	Scene *scene;
 
-
-  // handy for storing neighbors and not destructing all the time
-  list<ppair> neighbors;
-
+  vector<ppair> neighbors;
   
   ANNpointArray   dataPts;        // data points
   int             dataPtsSize;    // number of data points
