@@ -34,6 +34,7 @@ using namespace std;
 #include "group.hpp"
 
 #define	MAX_PARTICLES 100          // Number Of Particles To Create
+#define MAX_GROUPS 1
 
 bool keys[512];
 
@@ -56,9 +57,9 @@ GLuint	col;                       // Current Color Selection
 GLuint	delay;                     // Rainbow Effect Delay
 GLuint	texture[1];                // Storage For Our Particle Texture
 
-struct particle particles[MAX_PARTICLES]; // Particle Array (Room For Particle Info)
+struct particle particles[MAX_PARTICLES * MAX_GROUPS]; // Particle Array (Room For Particle Info)
 
-Group groups[16];
+Group groups[MAX_GROUPS];
 
 static GLfloat colors[12][3] = {   // Rainbow Of Colors
 	{1.0f,0.5f,0.5f}, {1.0f,0.75f,0.5f}, {1.0f,1.0f,0.5f}, {0.75f,1.0f,0.5f},
@@ -135,15 +136,18 @@ int InitGL(void) {
 	boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
 
 	// initialize all particles
-	for(loop = 0; loop < MAX_PARTICLES; ++loop)	{
-		particles[loop].active = true;
-		particles[loop].life = 1.0f;
-		particles[loop].pos = Vector3f(normr(), normr(), normr());
-    particles[loop].vel = Vector3f(normr(), normr(), normr());
-		groups[0].push_back(&particles[loop]);
-	}
-	groups[0].scene = &scene;
-  groups[0].controlled = true;
+  for(int i = 0; i < MAX_GROUPS; ++i) {
+    for(loop = 0; loop < MAX_PARTICLES; ++loop)	{
+      particles[i*MAX_PARTICLES + loop].active = true;
+      particles[i*MAX_PARTICLES + loop].life = 1.0f;
+      particles[i*MAX_PARTICLES + loop].pos = Vector3f(normr()+(i*10), normr(), normr());
+      particles[i*MAX_PARTICLES + loop].vel = Vector3f(normr(), normr(), normr());
+      groups[i].push_back(&particles[i*MAX_PARTICLES + loop]);
+    }
+    groups[i].scene = &scene;
+    groups[i].controlled = true;
+    groups[i].pos = Vector3f(i*10,0,0);
+  }
 	
 // 	for(;loop < MAX_PARTICLES; ++loop)	{
 // 		particles[loop].active = true;
@@ -162,7 +166,7 @@ int DrawGLScene(double timediff)							// Here's Where We Do All The Drawing
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear Screen And Depth Buffer
 	glLoadIdentity();						// Reset The ModelView Matrix
 	
-	for(loop = 0; loop < 16; ++loop) {
+	for(loop = 0; loop < MAX_GROUPS; ++loop) {
 		groups[loop].DrawParticles();
 	}
 	
@@ -179,7 +183,7 @@ void control_group_key(int group, bool toggle_control_group) {
   if(toggle_control_group) {
     groups[group].controlled = !groups[group].controlled;
   } else {
-    for(int i = 0; i < 8; ++i) {
+    for(int i = 0; i < MAX_GROUPS; ++i) {
       groups[i].controlled = false;
     }
     groups[group].controlled = true;
@@ -368,10 +372,10 @@ int main(int argc, char **argv)
 		timediff = (now.tv_sec - prev.tv_sec) + (now.tv_usec - prev.tv_usec)/1000000.0f;
 		prev = now;
  		printf("\rFPS: %f", 1.0f/timediff);
-// 		for(int i = 0; i < 16; ++i) {
-// 			groups[i].Move(timediff);
-// 		}
-		groups[0].Move(timediff);
+ 		for(int i = 0; i < MAX_GROUPS; ++i) {
+ 			groups[i].Move(timediff);
+ 		}
+		//groups[0].Move(timediff);
 		DrawGLScene(timediff);
 		check_keys(timediff);
 		

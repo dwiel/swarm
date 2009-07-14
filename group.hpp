@@ -67,6 +67,8 @@ public:
   
   float vel_render_base_size_x;
   float vel_render_base_size_y;
+  
+  Vector3f pos;
 	
 	Scene *scene;
 

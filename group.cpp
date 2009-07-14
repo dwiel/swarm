@@ -24,6 +24,7 @@ Group::Group() {
   this->vel_render_scale_y = 0.01;
   this->vel_render_base_size_x = 0.5;
   this->vel_render_base_size_y = 0.5;
+  this->pos = Vector3f(0,0,0);
 
   this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
@@ -125,7 +126,7 @@ void Group::figureVelocities() {
     p->g = 0;
     p->b = 0;
 
-    if(p->pos.length() > 10) {
+    if((p->pos - this->pos).length() > 10) {
       p->g = 1;
     }
 	}
@@ -150,9 +151,10 @@ Vector3f Group::avoidTouching(particle* p) {
 
 // keep inside a general sphere around the point (0, 0, 0)
 Vector3f Group::stayInBounds(particle* p) {
-	float len = p->pos.length();
+  Vector3f dist = p->pos - this->pos;
+	float len = dist.length();
 	if(len > 10) {
-		return -p->pos * (len - 10);
+		return -dist * (len - 10);
 	} else {
     return Vector3f(0,0,0);
   }
