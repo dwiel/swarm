@@ -139,6 +139,7 @@ int InitGL(void) {
 		particles[loop].active = true;
 		particles[loop].life = 1.0f;
 		particles[loop].pos = Vector3f(normr(), normr(), normr());
+    particles[loop].vel = Vector3f(normr(), normr(), normr());
 		groups[0].push_back(&particles[loop]);
 	}
 	groups[0].scene = &scene;

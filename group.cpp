@@ -103,7 +103,7 @@ void Group::figureVelocities() {
 	float len;
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;
-    getNNearestNeighbors(&neighbors, p, 10);
+    //getNNearestNeighbors(&neighbors, p, 10);
 
     //p->vel -= moveToNeighborsCenter(p) * 1.0;
  		p->vel += stayInBounds(p) * 0.001;
@@ -124,6 +124,10 @@ void Group::figureVelocities() {
     p->r = 1;
     p->g = 0;
     p->b = 0;
+
+    if(p->pos.length() > 10) {
+      p->g = 1;
+    }
 	}
 }
 
@@ -149,7 +153,9 @@ Vector3f Group::stayInBounds(particle* p) {
 	float len = p->pos.length();
 	if(len > 10) {
 		return -p->pos * (len - 10);
-	}
+	} else {
+    return Vector3f(0,0,0);
+  }
 }
 
 void Group::resizeDataPts() {
