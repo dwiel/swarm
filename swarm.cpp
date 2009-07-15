@@ -346,22 +346,61 @@ int HandleSDL(SDL_Event *event)
 	return done;
 }
 
+void OSC_error(int num, const char *msg, const char *path) {
+  printf("liblo server error %d in path %s: %s\n", num, path, msg);
+}
+
+// 100 - 600
+int bass_handler(const char *path, const char *types, lo_arg **argv, int argc,
+     void *data, void *user_data)
+{
+    groups[0].vel_render_scale_x = (argv[0]->f / 100.0f) - 1.0f;
+    groups[0].vel_render_scale_y = (argv[0]->f / 100.0f) - 1.0f;
+
+    return 0;
+}
+
+// - 1000
+int mid_handler(const char *path, const char *types, lo_arg **argv, int argc,
+     void *data, void *user_data)
+{
+    groups[0].color_off = (argv[0]->f / 50.0f);
+
+    return 0;
+}
+
+// - 1500
+int high_handler(const char *path, const char *types, lo_arg **argv, int argc,
+     void *data, void *user_data)
+{
+    groups[0].scene->speed = pow(argv[0]->f, 2.0f) / 1500;
+
+    return 0;
+}
+
+
+
 int main(int argc, char **argv)
 {
 	SDL_Init(SDL_INIT_VIDEO);
+  lo_server s = lo_server_new("9001", OSC_error);
+  lo_server_add_method(s, "/notes/bass", "f", bass_handler, NULL);
+  lo_server_add_method(s, "/notes/mid", "f", mid_handler, NULL);
+  lo_server_add_method(s, "/notes/high", "f", high_handler, NULL);
 
-	//int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
+
+	int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
 	// int flags = SDL_FULLSCREEN | SDL_OPENGL;
-	int flags = SDL_OPENGL;
+	//int flags = SDL_OPENGL;
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-	// SDL_SetVideoMode(1024, 768, 16, flags);
-	SDL_SetVideoMode(640, 480, 16, flags);
+	SDL_SetVideoMode(1024, 768, 16, flags);
+	// SDL_SetVideoMode(640, 480, 16, flags);
 
 	InitGL ();
-	// ReSizeGLScene ( 1024, 768 );
-	ReSizeGLScene ( 640, 480 );
+	ReSizeGLScene ( 1024, 768 );
+	// ReSizeGLScene ( 640, 480 );
 
 	timeval now, prev;
 	double timediff;
@@ -385,6 +424,8 @@ int main(int argc, char **argv)
 		{
 			done = HandleSDL(&event);
 		}
+    
+    lo_server_recv_noblock(s, 0);
 	}
 
 	SDL_Quit();

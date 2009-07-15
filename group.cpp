@@ -15,31 +15,31 @@ bool operator<(const ppair& p1, const ppair& p2) {
 }
 
 Group::Group() {
-	this->maximum_velocity = 2.0f;
-	this->pause_movement = false;
-	this->speed = 2.0f;
-	this->scene = 0;
-  this->controlled = false;
-  this->vel_render_scale_x = 0.01;
-  this->vel_render_scale_y = 0.01;
-  this->vel_render_base_size_x = 0.5;
-  this->vel_render_base_size_y = 0.5;
-  this->pos = Vector3f(0,0,0);
+	maximum_velocity = 2.0f;
+	pause_movement = false;
+	speed = 2.0f;
+	scene = 0;
+  controlled = false;
+  vel_render_scale_x = 0.01;
+  vel_render_scale_y = 0.01;
+  vel_render_base_size_x = 0.5;
+  vel_render_base_size_y = 0.5;
+  pos = Vector3f(0,0,0);
   move_to_neighbor_center_weight = 0.001;
   stay_in_bounds_weight = 0.001;
   avoid_touching_weight = 0.001;
 
-  this->nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
-  this->dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
+  nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
+  dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists
   
-  this->dataPtsSize = 1;
-  this->dataPts = annAllocPts(this->dataPtsSize, 3);
+  dataPtsSize = 1;
+  dataPts = annAllocPts(dataPtsSize, 3);
   color_off = 10;
 }
 
 Group::~Group() {
-  delete [] this->nnIdx;
-  delete [] this->dists;
+  delete [] nnIdx;
+  delete [] dists;
 }
 
 void Group::DrawParticles() {
@@ -121,17 +121,17 @@ void Group::figureVelocities() {
 		}
 		
     // generate color from velocity and color offset
-//     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
-//     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
-//     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
+     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
+     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
 
-    p->r = 1;
-    p->g = 0;
-    p->b = 0;
-
-    if((p->pos - this->pos).length() > 10) {
-      p->g = 1;
-    }
+//     p->r = 1;
+//     p->g = 0;
+//     p->b = 0;
+// 
+//     if((p->pos - this->pos).length() > 10) {
+//       p->g = 1;
+//     }
 	}
 }
 
