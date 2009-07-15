@@ -168,7 +168,7 @@ int DrawGLScene(double timediff)							// Here's Where We Do All The Drawing
 	glLoadIdentity();						// Reset The ModelView Matrix
 	
 	for(loop = 0; loop < MAX_GROUPS; ++loop) {
-		groups[loop].DrawParticles();
+		groups[loop].Draw();
 	}
 	
 	SDL_GL_SwapBuffers ();

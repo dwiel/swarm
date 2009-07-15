@@ -42,14 +42,14 @@ Group::~Group() {
   delete [] dists;
 }
 
-void Group::DrawParticles() {
+void Group::Draw() {
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;
 		float x = p->pos.x;                         // Grab Our Particle X Position
 		float y = p->pos.y;                         // Grab Our Particle Y Position
 		float z = p->pos.z + this->scene->zoom;     // Particle Z Pos + Zoom
 		
-		glColor4f(p->r, p->g, p->b, p->life);
+		glColor4f(p->r, p->g, p->b, p->a);
 		
 		// optionally elongate particles based on velocity
     float vx = this->vel_render_base_size_x;
@@ -121,9 +121,9 @@ void Group::figureVelocities() {
 		}
 		
     // generate color from velocity and color offset
-     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
-     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
-     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+    p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
+    p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
+    p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
 
 //     p->r = 1;
 //     p->g = 0;

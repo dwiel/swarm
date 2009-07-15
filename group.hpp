@@ -37,7 +37,7 @@ public:
 	Group();
   ~Group();
 	
-	void DrawParticles();
+	void Draw();
 	void Move(float timediff);
 	
 	void figureVelocities();

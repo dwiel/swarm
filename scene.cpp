@@ -1,6 +1,7 @@
 #include "scene.hpp"
 
 Scene::Scene() {
-  this->zoom = -40.0f;
-	this->speed = 1.0f;
+  zoom = -40.0f;
+	speed = 1.0f;
+  pos = Vector3f(0,0,0);
 }
