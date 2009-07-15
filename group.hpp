@@ -56,6 +56,9 @@ public:
   void destroyKNN();
   void resizeDataPts();
 
+  struct particle* particles;
+  int num_particles;
+  
 	float maximum_velocity;
 	float speed;
 	bool pause_movement;

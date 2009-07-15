@@ -3,6 +3,9 @@
 #include <GL/gl.h>					// Header File For The OpenGL 
 #include <GL/glu.h>					// Header File For The GLu
 
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+
 #include <stdlib.h>
 #include <iostream>
 
@@ -28,6 +31,21 @@ Group::Group() {
   move_to_neighbor_center_weight = 0.001;
   stay_in_bounds_weight = 0.001;
   avoid_touching_weight = 0.001;
+  num_particles = 1000;
+
+  boost::mt19937 rng;
+  boost::normal_distribution<float> ndist(0, 5);
+  boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
+
+  // initialize all particles
+  particles = new particle[num_particles];
+  for(int i = 0; i < num_particles; ++i) {
+    particles[i].active = true;
+    particles[i].a = 1.0f;
+    particles[i].pos = Vector3f(normr(), normr(), normr());
+    particles[i].vel = Vector3f(normr(), normr(), normr());
+    push_back(&particles[i]);
+  }
 
   nnIdx = new ANNidx[MAX_KNN_SIZE];            // allocate near neigh indices
   dists = new ANNdist[MAX_KNN_SIZE];           // allocate near neighbor dists

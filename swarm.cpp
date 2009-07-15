@@ -11,8 +11,6 @@
 #include <GL/gl.h>					// Header File For The OpenGL 
 #include <GL/glu.h>					// Header File For The GLu
 #include <sys/time.h>
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
 
 #include <list>
 #include <vector>
@@ -131,32 +129,10 @@ int InitGL(void) {
 	glEnable(GL_TEXTURE_2D);                  // Enable Texture Mapping
 	glBindTexture(GL_TEXTURE_2D, texture[0]); // Select Our Texture
 
-	boost::mt19937 rng;
-	boost::normal_distribution<float> ndist(0, 5);
-	boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
-
-	// initialize all particles
   for(int i = 0; i < MAX_GROUPS; ++i) {
-    for(loop = 0; loop < MAX_PARTICLES; ++loop)	{
-      particles[i*MAX_PARTICLES + loop].active = true;
-      particles[i*MAX_PARTICLES + loop].life = 1.0f;
-      particles[i*MAX_PARTICLES + loop].pos = Vector3f(normr()+(i*10), normr(), normr());
-      //particles[i*MAX_PARTICLES + loop].vel = Vector3f(normr(), normr(), normr());
-      particles[i*MAX_PARTICLES + loop].vel = Vector3f(normr()*0, normr()*0, normr()*0);
-      groups[i].push_back(&particles[i*MAX_PARTICLES + loop]);
-    }
     groups[i].scene = &scene;
     groups[i].controlled = true;
-    groups[i].pos = Vector3f(i*10,0,0);
   }
-	
-// 	for(;loop < MAX_PARTICLES; ++loop)	{
-// 		particles[loop].active = true;
-// 		particles[loop].life = 1.0f;
-// 		particles[loop].pos = Vector3f(normr(), normr(), normr());
-// 		groups[1].insert(&particles[loop]);
-// 	}
-// 	groups[1].scene = &scene;
 	
 	// Initialization Went OK
 	return 1;
