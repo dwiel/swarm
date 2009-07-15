@@ -25,13 +25,13 @@ Group::Group() {
   controlled = false;
   vel_render_scale_x = 0.01;
   vel_render_scale_y = 0.01;
-  vel_render_base_size_x = 0.5;
-  vel_render_base_size_y = 0.5;
+  render_base_size_x = 0.5;
+  render_base_size_y = 0.5;
   pos = Vector3f(0,0,0);
   move_to_neighbor_center_weight = 0.001;
   stay_in_bounds_weight = 0.001;
   avoid_touching_weight = 0.001;
-  num_particles = 1000;
+  num_particles = 100;
 
   boost::mt19937 rng;
   boost::normal_distribution<float> ndist(0, 5);
@@ -70,8 +70,8 @@ void Group::Draw() {
 		glColor4f(p->r, p->g, p->b, p->a);
 		
 		// optionally elongate particles based on velocity
-    float vx = this->vel_render_base_size_x;
-    float vy = this->vel_render_base_size_y;
+    float vx = this->render_base_size_x;
+    float vy = this->render_base_size_y;
     
  		vx += p->vel.x*this->vel_render_scale_x;
  		vy += p->vel.y*this->vel_render_scale_y;

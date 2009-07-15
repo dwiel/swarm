@@ -36,12 +36,30 @@ class Group: public vector<particle*> {
 public:
 	Group();
   ~Group();
-	
+
+  // public functions
 	void Draw();
 	void Move(float timediff);
 	
-	void figureVelocities();
+  // public parameters
+  float maximum_velocity;
+  float speed;
+  bool pause_movement;
+  bool controlled;
+  float color_off;
+  float vel_render_scale_x;
+  float vel_render_scale_y;
+  float render_base_size_x;
+  float render_base_size_y;
+  float move_to_neighbor_center_weight;
+  float stay_in_bounds_weight;
+  float avoid_touching_weight;
+  Vector3f pos;
+  Scene *scene;
 
+private:
+  // internal functions
+	void figureVelocities();
 // 	list<ppair> getNearestNeighbors(int p1,  int num);
 	Vector3f moveToNeighborsCenter(particle* p);
 	Vector3f stayInBounds(particle* p);
@@ -50,43 +68,23 @@ public:
 	void getNNearestNeighbors(vector<ppair>*, particle* p1, int max_dist);
 	Vector3f avoidTouching(particle* p);
 
-	priority_queue<ppair> recent_distances;
-  
+  // internal data
+  vector<ppair> neighbors;  
+
+  // knn helper and storage
   void buildKNN();
   void destroyKNN();
   void resizeDataPts();
-
-  struct particle* particles;
-  int num_particles;
-  
-	float maximum_velocity;
-	float speed;
-	bool pause_movement;
-  bool controlled;
-  float color_off;
-  
-  float vel_render_scale_x;
-  float vel_render_scale_y;
-  
-  float vel_render_base_size_x;
-  float vel_render_base_size_y;
-  
-  float move_to_neighbor_center_weight;
-  float stay_in_bounds_weight;
-  float avoid_touching_weight;
-  
-  Vector3f pos;
-	
-	Scene *scene;
-
-  vector<ppair> neighbors;
-  
   ANNpointArray   dataPts;        // data points
   int             dataPtsSize;    // number of data points
   ANNpoint        queryPt;        // query point
   ANNidxArray     nnIdx;          // near neighbor indices
   ANNdistArray    dists;          // near neighbor distances
   ANNkd_tree*     kdTree;         // search structure
+
+  struct particle* particles;
+  int num_particles;
+  
 };
 
 #endif // GROUP_HPP
