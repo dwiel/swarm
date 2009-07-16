@@ -13,6 +13,8 @@
 
 using namespace std;
 
+set<Group*> Group::groups;
+
 bool operator<(const ppair& p1, const ppair& p2) {
 	return p1.distance > p2.distance;
 }
@@ -53,11 +55,15 @@ Group::Group() {
   dataPtsSize = 1;
   dataPts = annAllocPts(dataPtsSize, 3);
   color_off = 10;
+  
+  groups.insert(this);
 }
 
 Group::~Group() {
   delete [] nnIdx;
   delete [] dists;
+  
+  groups.erase(this);
 }
 
 void Group::Draw() {

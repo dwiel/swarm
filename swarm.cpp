@@ -37,8 +37,10 @@ extern "C" {
 #include "particle.hpp"
 #include "group.hpp"
 
-#define	MAX_PARTICLES 100          // Number Of Particles To Create
-#define MAX_GROUPS 1
+#include <tolua.h>
+#include "tolua_group.h"
+
+#define MAX_GROUPS 0
 
 bool keys[512];
 
@@ -61,8 +63,6 @@ GLuint	col;                       // Current Color Selection
 GLuint	delay;                     // Rainbow Effect Delay
 GLuint	texture[1];                // Storage For Our Particle Texture
 
-struct particle particles[MAX_PARTICLES * MAX_GROUPS]; // Particle Array (Room For Particle Info)
-
 Group groups[MAX_GROUPS];
 
 static GLfloat colors[12][3] = {   // Rainbow Of Colors
@@ -80,22 +80,26 @@ int LoadGLTextures()							// Load Bitmap And Convert To A Texture
 	FILE *tf;
 
 	tf = fopen ( "data/particle.raw", "rb" );
-	fread ( tex, 1, 32 * 32 * 3, tf );
+	size_t ret = fread ( tex, 1, 32 * 32 * 3, tf );
 	fclose ( tf );
+  
+  if(ret) {
+    // do stuff
+    Status=1;						// Set The Status To TRUE
+    glGenTextures(1, &texture[0]);				// Create One Texture
 
-	// do stuff
-	Status=1;						// Set The Status To TRUE
-	glGenTextures(1, &texture[0]);				// Create One Texture
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, 32, 32,
+      0, GL_RGB, GL_UNSIGNED_BYTE, tex);
 
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, 32, 32,
-		0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+    delete [] tex;
 
-	delete [] tex;
-
-  return Status;							// Return The Status
+    return Status;							// Return The Status
+  } else {
+    return 0;
+  }
 }
 
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)			// Resize And Initialize The GL Window
@@ -135,9 +139,9 @@ int InitGL(void) {
 	glEnable(GL_TEXTURE_2D);                  // Enable Texture Mapping
 	glBindTexture(GL_TEXTURE_2D, texture[0]); // Select Our Texture
 
-  for(int i = 0; i < MAX_GROUPS; ++i) {
-    groups[i].scene = &scene;
-    groups[i].controlled = true;
+  for(set<Group*>::iterator iter = Group::groups.begin(); iter != Group::groups.end(); ++iter) {
+    (*iter)->scene = &scene;
+    (*iter)->controlled = true;
   }
 	
 	// Initialization Went OK
@@ -149,9 +153,9 @@ int DrawGLScene(double timediff)							// Here's Where We Do All The Drawing
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear Screen And Depth Buffer
 	glLoadIdentity();						// Reset The ModelView Matrix
 	
-	for(loop = 0; loop < MAX_GROUPS; ++loop) {
-		groups[loop].Draw();
-	}
+  for(set<Group*>::iterator iter = Group::groups.begin(); iter != Group::groups.end(); ++iter) {
+    (*iter)->Draw();
+  }
 	
 	SDL_GL_SwapBuffers ();
 
@@ -162,33 +166,8 @@ void print_debug() {
 //   printf("number of 0s"
 }
 
-void control_group_key(int group, bool toggle_control_group) {
-  if(toggle_control_group) {
-    groups[group].controlled = !groups[group].controlled;
-  } else {
-    for(int i = 0; i < MAX_GROUPS; ++i) {
-      groups[i].controlled = false;
-    }
-    groups[group].controlled = true;
-  }
-}
-
 void check_keys (float timediff)
 {
-	//if (keys[SDLK_]) pause_movement ^= 1;
-  bool toggle_control_group = false;
-  if (keys[SDLK_LCTRL] || keys[SDLK_RCTRL])
-    toggle_control_group = true;
-    
-  if (keys[SDLK_1]) control_group_key(0, toggle_control_group);
-  if (keys[SDLK_2]) control_group_key(1, toggle_control_group);
-  if (keys[SDLK_3]) control_group_key(2, toggle_control_group);
-  if (keys[SDLK_4]) control_group_key(3, toggle_control_group);
-  if (keys[SDLK_5]) control_group_key(4, toggle_control_group);
-  if (keys[SDLK_6]) control_group_key(5, toggle_control_group);
-  if (keys[SDLK_7]) control_group_key(6, toggle_control_group);
-  if (keys[SDLK_8]) control_group_key(7, toggle_control_group);
-  
   if (keys[SDLK_d]) print_debug();
 
   // maybe wait and do this in Lua or python ...
@@ -404,8 +383,16 @@ int main(int argc, char **argv)
   
   lua_State *L = lua_open();
   luaL_openlibs(L);
+  tolua_group_open(L);
   luaL_dofile(L, "foo.lua");
-  lua_close(L);
+
+  lua_getfield(L, LUA_GLOBALSINDEX, "init");
+  lua_pcall(L, 0, 0, 0);
+  
+  for(set<Group*>::iterator iter = Group::groups.begin(); iter != Group::groups.end(); ++iter) {
+    (*iter)->scene = &scene;
+    (*iter)->controlled = true;
+  }
   
   timeval now, prev;
 	double timediff;
@@ -417,12 +404,14 @@ int main(int argc, char **argv)
 		timediff = (now.tv_sec - prev.tv_sec) + (now.tv_usec - prev.tv_usec)/1000000.0f;
 		prev = now;
  		printf("\rFPS: %f", 1.0f/timediff);
- 		for(int i = 0; i < MAX_GROUPS; ++i) {
- 			groups[i].Move(timediff);
+    for(set<Group*>::iterator iter = Group::groups.begin(); iter != Group::groups.end(); ++iter) {
+ 			(*iter)->Move(timediff);
  		}
-		//groups[0].Move(timediff);
 		DrawGLScene(timediff);
 		check_keys(timediff);
+    
+    lua_getfield(L, LUA_GLOBALSINDEX, "update");
+    lua_pcall(L, 0, 0, 0);
 		
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
@@ -434,6 +423,7 @@ int main(int argc, char **argv)
 	}
 
 	SDL_Quit();
+  lua_close(L);
   
   cout << endl;
 }

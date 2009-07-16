@@ -56,6 +56,8 @@ public:
   float avoid_touching_weight;
   Vector3f pos;
   Scene *scene;
+  
+  static set<Group*> groups;
 
 private:
   // internal functions
@@ -84,7 +86,6 @@ private:
 
   struct particle* particles;
   int num_particles;
-  
 };
 
 #endif // GROUP_HPP
