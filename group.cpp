@@ -18,7 +18,7 @@ bool operator<(const ppair& p1, const ppair& p2) {
 }
 
 Group::Group() {
-	maximum_velocity = 2.0f;
+	maximum_velocity = 10.0f;
 	pause_movement = false;
 	speed = 2.0f;
 	scene = 0;
@@ -28,10 +28,10 @@ Group::Group() {
   render_base_size_x = 0.5;
   render_base_size_y = 0.5;
   pos = Vector3f(0,0,0);
-  move_to_neighbor_center_weight = 0.001;
-  stay_in_bounds_weight = 0.001;
-  avoid_touching_weight = 0.001;
-  num_particles = 100;
+  move_to_neighbor_center_weight = 0.01;
+  stay_in_bounds_weight = 0.0001;
+  avoid_touching_weight = 0.01;
+  num_particles = 500;
 
   boost::mt19937 rng;
   boost::normal_distribution<float> ndist(0, 5);
@@ -143,9 +143,9 @@ void Group::figureVelocities() {
     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
 
-//     p->r = 1;
-//     p->g = 0;
-//     p->b = 0;
+    p->r = 1;
+    p->g = 0;
+    p->b = 0;
 // 
 //     if((p->pos - this->pos).length() > 10) {
 //       p->g = 1;

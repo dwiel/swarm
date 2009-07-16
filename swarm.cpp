@@ -23,6 +23,12 @@ using namespace std;
 
 #include "SDL.h"
 
+extern "C" {
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+}
+
 #include "lo/lo.h"
 
 #include "vmath.h"
@@ -354,6 +360,23 @@ int high_handler(const char *path, const char *types, lo_arg **argv, int argc,
     return 0;
 }
 
+int generic_handler(const char *path, const char *types, lo_arg **argv,
+        int argc, void *data, void *user_data)
+{
+  
+//   int i;
+
+//   printf("path: <%s>\n", path);
+//   for (i=0; i<argc; i++) {
+//     printf("arg %d '%c' ", i, types[i]);
+//     lo_arg_pp(types[i], argv[i]);
+//     printf("\n");
+//   }
+//   printf("\n");
+//   fflush(stdout);
+
+  return 1;
+}
 
 
 int main(int argc, char **argv)
@@ -363,6 +386,7 @@ int main(int argc, char **argv)
   lo_server_add_method(s, "/notes/bass", "f", bass_handler, NULL);
   lo_server_add_method(s, "/notes/mid", "f", mid_handler, NULL);
   lo_server_add_method(s, "/notes/high", "f", high_handler, NULL);
+  lo_server_add_method(s, NULL, NULL, generic_handler, NULL);
 
 
 	int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
@@ -377,8 +401,13 @@ int main(int argc, char **argv)
 	InitGL ();
 	ReSizeGLScene ( 1024, 768 );
 	// ReSizeGLScene ( 640, 480 );
-
-	timeval now, prev;
+  
+  lua_State *L = lua_open();
+  luaL_openlibs(L);
+  luaL_dofile(L, "foo.lua");
+  lua_close(L);
+  
+  timeval now, prev;
 	double timediff;
 	int done = 0;
 	gettimeofday(&prev, NULL); // intialize the time

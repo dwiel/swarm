@@ -1,0 +1,27 @@
+$cfile "group.hpp"
+
+class Group {
+public:
+  Group();
+  ~Group();
+
+  // public functions
+  void Draw();
+  void Move(float timediff);
+  
+  // public parameters
+  float maximum_velocity;
+  float speed;
+  bool pause_movement;
+  bool controlled;
+  float color_off;
+  float vel_render_scale_x;
+  float vel_render_scale_y;
+  float render_base_size_x;
+  float render_base_size_y;
+  float move_to_neighbor_center_weight;
+  float stay_in_bounds_weight;
+  float avoid_touching_weight;
+  Vector3f pos;
+  Scene *scene;
+};
