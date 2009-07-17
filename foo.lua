@@ -6,6 +6,11 @@ function init()
   groups["swarm1"] = Group:new()
   groups["swarm2"] = Group:new()
   groups["swarm3"] = Group:new()
+
+  -- enable when actually connected to OSC source
+  --groups["swarm1"].render = false
+  --groups["swarm2"].render = false
+  --groups["swarm3"].render = false
   
   groups["swarm2"].pos.x = -30
   groups["swarm3"].pos.x = 30
@@ -25,9 +30,9 @@ function OSCevent(path, value)
   g = groups[swarm_name]
   if path == "/mute" then
     if value > 0.5 then
-      g.render = True
+      g.render = true
     else
-      g.render = False
+      g.render = false
     end
   elseif path == "/notes/bass" then
     if value < 200 then

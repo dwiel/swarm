@@ -377,7 +377,6 @@ int generic_handler(const char *path, const char *types, lo_arg **argv,
   } else {
     lua_pushnumber(L, argv[0]->i);
   }
-  ;
   if (lua_pcall(L, 2, 0, 0)) {
     cout << "error in OSCevent: " << lua_tostring(L, -1) << endl;
     lua_pop(L, 1);
@@ -418,7 +417,10 @@ int main(int argc, char **argv)
   luaL_dofile(L, "foo.lua");
 
   lua_getfield(L, LUA_GLOBALSINDEX, "init");
-  lua_pcall(L, 0, 0, 0);
+  if (lua_pcall(L, 0, 0, 0)) {
+    cout << "error in init: " << lua_tostring(L, -1) << endl;
+    lua_pop(L, 1);
+  }
   
   for(set<Group*>::iterator iter = Group::groups.begin(); iter != Group::groups.end(); ++iter) {
     (*iter)->scene = &scene;

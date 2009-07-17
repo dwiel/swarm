@@ -20,7 +20,7 @@ bool operator<(const ppair& p1, const ppair& p2) {
 }
 
 Group::Group() {
-  render = false;
+  render = true;
 	maximum_velocity = 10.0f;
 	pause_movement = false;
 	speed = 2.0f;
