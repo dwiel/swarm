@@ -1,12 +1,12 @@
 require "sdlkeys"
 
-groups = {}
-
 function init()
+  groups = {}
+  
   groups["swarm1"] = Group:new()
   groups["swarm2"] = Group:new()
   groups["swarm3"] = Group:new()
-
+  
   groups["swarm2"].pos.x = -30
   groups["swarm3"].pos.x = 30
 end
