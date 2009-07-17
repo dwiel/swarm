@@ -5,7 +5,6 @@
 
 struct particle {     // Create A Structure For Particle
 	bool	active;      // Active (Yes/No)
-	float	fade;        // Fade Speed
 	float	r;
 	float	g;
 	float	b;

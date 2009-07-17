@@ -20,6 +20,7 @@ bool operator<(const ppair& p1, const ppair& p2) {
 }
 
 Group::Group() {
+  render = false;
 	maximum_velocity = 10.0f;
 	pause_movement = false;
 	speed = 2.0f;
@@ -68,33 +69,34 @@ Group::~Group() {
 
 void Group::Draw() {
   // TODO: adjust group position in opengl transform
-  
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glTranslatef(pos.x, pos.y, pos.z);
-  
-	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
-		particle* p = *iter;
-		float x = p->pos.x;                         // Grab Our Particle X Position
-		float y = p->pos.y;                         // Grab Our Particle Y Position
-		float z = p->pos.z + this->scene->zoom;     // Particle Z Pos + Zoom
-		
-		glColor4f(p->r, p->g, p->b, p->a);
-		
-		// optionally elongate particles based on velocity
-    float vx = this->render_base_size_x;
-    float vy = this->render_base_size_y;
+  if(render) {
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(pos.x, pos.y, pos.z);
     
- 		vx += p->vel.x*this->vel_render_scale_x;
- 		vy += p->vel.y*this->vel_render_scale_y;
-		
-		glBegin(GL_TRIANGLE_STRIP);
-			glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z); // Top Right
-			glTexCoord2d(0,1); glVertex3f(x-vx, y+vy,z); // Top Left
-			glTexCoord2d(1,0); glVertex3f(x+vx, y-vy,z); // Bottom Right
-			glTexCoord2d(0,0); glVertex3f(x-vx, y-vy,z); // Bottom Left
-		glEnd();
-	}
+    for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
+      particle* p = *iter;
+      float x = p->pos.x;                         // Grab Our Particle X Position
+      float y = p->pos.y;                         // Grab Our Particle Y Position
+      float z = p->pos.z + this->scene->zoom;     // Particle Z Pos + Zoom
+      
+      glColor4f(p->r, p->g, p->b, p->a);
+      
+      // optionally elongate particles based on velocity
+      float vx = this->render_base_size_x;
+      float vy = this->render_base_size_y;
+      
+      vx += p->vel.x*this->vel_render_scale_x;
+      vy += p->vel.y*this->vel_render_scale_y;
+      
+      glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z); // Top Right
+        glTexCoord2d(0,1); glVertex3f(x-vx, y+vy,z); // Top Left
+        glTexCoord2d(1,0); glVertex3f(x+vx, y-vy,z); // Bottom Right
+        glTexCoord2d(0,0); glVertex3f(x-vx, y-vy,z); // Bottom Left
+      glEnd();
+    }
+  }
 }
 
 // probably wont be changing.

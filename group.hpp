@@ -42,6 +42,7 @@ public:
 	void Move(float timediff);
 	
   // public parameters
+  bool render;
   float maximum_velocity;
   float speed;
   bool pause_movement;
