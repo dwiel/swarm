@@ -72,7 +72,6 @@ void Group::Draw() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glTranslatef(pos.x, pos.y, pos.z);
-  cout << pos << endl;
   
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;

@@ -1,24 +1,26 @@
 require "sdlkeys"
 
+groups = {}
+
 function init()
-  g1 = Group:new()
-  g2 = Group:new()
+  groups["swarm1"] = Group:new()
+  groups["swarm2"] = Group:new()
+  groups["swarm3"] = Group:new()
+
+  groups["swarm2"].pos.x = -30
+  groups["swarm3"].pos.x = 30
 end
 
 function update()
---   if keys[SDLK_x] then
---     g.speed = 10
---   else
---     g.speed = 2
---   end
-
---  if g2 == nil then
---    g2 = Group:new()
---  end
-  g.pos.z = 0
+  if keys[SDLK_x] then
+    groups["swarm1"].speed = 10
+  else
+    groups["swarm1"].speed = 2
+  end
 end
 
 function OSCevent(path, value)
+  g = groups[string.gsub(path, "/(swarm[%d]+)/.*")]
   if path == "/notes/bass" then
     if value < 200 then
       g.stay_in_bounds_weight = -0.001
@@ -45,7 +47,6 @@ function OSCevent(path, value)
   print(path, value)
 end
 
--- TODO
 -- function doNow()
 -- 
 -- end

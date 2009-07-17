@@ -443,7 +443,7 @@ int main(int argc, char **argv)
     
     lua_getfield(L, LUA_GLOBALSINDEX, "update");
     if (lua_pcall(L, 0, 0, 0) != 0) {
-      cout << "error in OSCevent: " << lua_tostring(L, -1) << endl;
+      cout << "error in update: " << lua_tostring(L, -1) << endl;
       lua_pop(L, 1);
     }
 		
