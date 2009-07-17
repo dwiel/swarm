@@ -1,0 +1,85 @@
+$cfile "vmath.h"
+
+class Vector3f
+{
+  // sorry can't do unions (in templates?)
+  float x;
+  float y; 
+  float z;
+
+  Vector3f();
+  Vector3f(float nx, float ny, float nz);
+  Vector3f(const Vector3f& src);
+  Vector3f operator=(const Vector3f& rhs);
+  float & operator[](int n);
+  Vector3f operator+(const Vector3f& rhs) const;
+  Vector3f operator-(const Vector3f& rhs) const;
+  Vector3f operator*(const Vector3f& rhs) const;
+  Vector3f operator/(const Vector3f& rhs) const;
+  Vector3f& operator+=(const Vector3f& rhs);
+  Vector3f& operator-=(const Vector3f& rhs);
+  Vector3f& operator*=(const Vector3f& rhs);
+  Vector3f& operator/=(const Vector3f& rhs);
+  float dotProduct(const Vector3f& rhs) const;
+  Vector3f crossProduct(const Vector3f& rhs) const;
+  Vector3f operator+(float rhs) const;
+  Vector3f operator-(float rhs) const;
+  Vector3f operator*(float rhs) const;
+  Vector3f operator/(float rhs) const;
+  Vector3f& operator+=(float rhs);
+  Vector3f& operator-=(float rhs);
+  Vector3f& operator*=(float rhs);
+  Vector3f& operator/=(float rhs);
+  bool operator==(const Vector3f& rhs) const;
+  bool operator!=(const Vector3f& rhs) const;
+  Vector3f operator-() const;
+  float length() const;
+  float lengthSq() const;
+  void normalize();
+  void rotate(float ax, float ay, float az);
+  Vector3f lerp(float fact, const Vector3f& r) const;
+  friend std::ostream& operator<<(std::ostream& lhs, const Vector3f rhs);
+};
+
+/*class Vector3 
+{
+  TOLUA_TEMPLATE_BIND(T, float)
+  
+  // sorry can't do unions (in templates?)
+  T x;
+  T y; 
+  T z;
+
+  Vector3();
+  Vector3(T nx, T ny, T nz);
+  Vector3(const Vector3<T>& src);
+  Vector3<T> operator=(const Vector3<T>& rhs);
+  T & operator[](int n);
+  Vector3<T> operator+(const Vector3<T>& rhs) const;
+  Vector3<T> operator-(const Vector3<T>& rhs) const;
+  Vector3<T> operator*(const Vector3<T>& rhs) const;
+  Vector3<T> operator/(const Vector3<T>& rhs) const;
+  Vector3<T>& operator+=(const Vector3<T>& rhs);
+  Vector3<T>& operator-=(const Vector3<T>& rhs);
+  Vector3<T>& operator*=(const Vector3<T>& rhs);
+  Vector3<T>& operator/=(const Vector3<T>& rhs);
+  T dotProduct(const Vector3<T>& rhs) const;
+  Vector3<T> crossProduct(const Vector3<T>& rhs) const;
+  Vector3<T> operator+(T rhs) const;
+  Vector3<T> operator-(T rhs) const;
+  Vector3<T> operator*(T rhs) const;
+  Vector3<T> operator/(T rhs) const;
+  Vector3<T>& operator+=(T rhs);
+  Vector3<T>& operator-=(T rhs);
+  Vector3<T>& operator*=(T rhs);
+  Vector3<T>& operator/=(T rhs);
+  bool operator==(const Vector3<T>& rhs) const;
+  bool operator!=(const Vector3<T>& rhs) const;
+  Vector3<T> operator-() const;
+  T length() const;
+  T lengthSq() const;
+  void normalize();
+  void rotate(T ax, T ay, T az);
+  Vector3<T> lerp(T fact, const Vector3<T>& r) const;
+  friend std::ostream& operator<<(std::ostream& lhs, const Vector3<T> rhs);
+};*/

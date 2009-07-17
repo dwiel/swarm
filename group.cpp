@@ -67,6 +67,13 @@ Group::~Group() {
 }
 
 void Group::Draw() {
+  // TODO: adjust group position in opengl transform
+  
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glTranslatef(pos.x, pos.y, pos.z);
+  cout << pos << endl;
+  
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;
 		float x = p->pos.x;                         // Grab Our Particle X Position
@@ -144,14 +151,19 @@ void Group::figureVelocities() {
 			p->vel *= maximum_velocity;
 		}
 		
-    // generate color from velocity and color offset
-    p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
-    p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
-    p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+//     // generate color from velocity and color offset
+//     p->r = p->vel.x*f(color_off)     + p->vel.y*f(color_off - 1) + p->vel.z*f(color_off - 2);
+//     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
+//     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
+    
+    p->r = f(color_off);
+    p->g = f(color_off - 1);
+    p->b = f(color_off - 2);
 
-    p->r = 1;
-    p->g = 0;
-    p->b = 0;
+//     p->r = 1;
+//     p->g = 0;
+//     p->b = 0;
+
 // 
 //     if((p->pos - this->pos).length() > 10) {
 //       p->g = 1;
@@ -180,7 +192,7 @@ Vector3f Group::avoidTouching(particle* p) {
 
 // keep inside a general sphere around the point (0, 0, 0)
 Vector3f Group::stayInBounds(particle* p) {
-  Vector3f dist = p->pos - this->pos;
+  Vector3f dist = p->pos;
 	float len = dist.length();
 	if(len > 10) {
 		return -dist * (len - 10);

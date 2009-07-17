@@ -1,0 +1,3 @@
+$cfile "swarm.hpp"
+
+extern bool keys[512];

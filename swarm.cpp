@@ -37,12 +37,14 @@ extern "C" {
 #include "particle.hpp"
 #include "group.hpp"
 
+#include "swarm.hpp"
+
 #include <tolua.h>
 #include "tolua_group.h"
+#include "tolua_swarm.h"
+#include "tolua_vmath.h"
 
-#define MAX_GROUPS 0
-
-bool keys[512];
+lua_State *L;
 
 bool active = true;                // Window Active Flag Set To TRUE By Default
 bool fullscreen = true;            // Fullscreen Flag Set To Fullscreen Mode By Default
@@ -62,6 +64,10 @@ GLuint	loop;                      // Misc Loop Variable
 GLuint	col;                       // Current Color Selection
 GLuint	delay;                     // Rainbow Effect Delay
 GLuint	texture[1];                // Storage For Our Particle Texture
+
+bool keys[512];
+
+#define MAX_GROUPS 0
 
 Group groups[MAX_GROUPS];
 
@@ -168,6 +174,8 @@ void print_debug() {
 
 void check_keys (float timediff)
 {
+  if(keys[SDLK_SPACE]) luaL_dofile(L, "foo.lua");
+  
   if (keys[SDLK_d]) print_debug();
 
   // maybe wait and do this in Lua or python ...
@@ -315,8 +323,11 @@ void OSC_error(int num, const char *msg, const char *path) {
 int bass_handler(const char *path, const char *types, lo_arg **argv, int argc,
      void *data, void *user_data)
 {
-    groups[0].vel_render_scale_x = (argv[0]->f / 100.0f) - 1.0f;
-    groups[0].vel_render_scale_y = (argv[0]->f / 100.0f) - 1.0f;
+    Group *group = (*Group::groups.begin());
+    group->vel_render_scale_x = (argv[0]->f / 1000.0f) - 1.0f;
+    group->vel_render_scale_y = (argv[0]->f / 1000.0f) - 1.0f;
+    
+    cout << "bass:" << argv[0]->f << endl;
 
     return 0;
 }
@@ -325,9 +336,12 @@ int bass_handler(const char *path, const char *types, lo_arg **argv, int argc,
 int mid_handler(const char *path, const char *types, lo_arg **argv, int argc,
      void *data, void *user_data)
 {
-    groups[0].color_off = (argv[0]->f / 50.0f);
+  Group *group = (*Group::groups.begin());
+  group->color_off = (argv[0]->f / 50.0f);
 
-    return 0;
+  cout << "mid:" << argv[0]->f << endl;
+
+  return 0;
 }
 
 // - 1500
@@ -342,17 +356,32 @@ int high_handler(const char *path, const char *types, lo_arg **argv, int argc,
 int generic_handler(const char *path, const char *types, lo_arg **argv,
         int argc, void *data, void *user_data)
 {
-  
-//   int i;
-
-//   printf("path: <%s>\n", path);
-//   for (i=0; i<argc; i++) {
-//     printf("arg %d '%c' ", i, types[i]);
-//     lo_arg_pp(types[i], argv[i]);
+//     int i;
+// 
+//     printf("path: <%s>\n", path);
+//     for (i=0; i<argc; i++) {
+//       printf("arg %d '%c' ", i, types[i]);
+//       //lo_arg_pp(types[i], argv[i]);
+//       printf("\n");
+//     }
 //     printf("\n");
-//   }
-//   printf("\n");
-//   fflush(stdout);
+//     fflush(stdout);
+// 
+//     return 1;
+
+
+  lua_getfield(L, LUA_GLOBALSINDEX, "OSCevent");
+  lua_pushstring(L, path);
+  if(types[0] == 'f' ) {
+    lua_pushnumber(L, argv[0]->f);
+  } else {
+    lua_pushnumber(L, argv[0]->i);
+  }
+  ;
+  if (lua_pcall(L, 2, 0, 0)) {
+    cout << "error in OSCevent: " << lua_tostring(L, -1) << endl;
+    lua_pop(L, 1);
+  }
 
   return 1;
 }
@@ -362,28 +391,30 @@ int main(int argc, char **argv)
 {
 	SDL_Init(SDL_INIT_VIDEO);
   lo_server s = lo_server_new("9001", OSC_error);
-  lo_server_add_method(s, "/notes/bass", "f", bass_handler, NULL);
-  lo_server_add_method(s, "/notes/mid", "f", mid_handler, NULL);
-  lo_server_add_method(s, "/notes/high", "f", high_handler, NULL);
+//   lo_server_add_method(s, "/notes/bass", "f", bass_handler, NULL);
+//   lo_server_add_method(s, "/notes/mid", "f", mid_handler, NULL);
+  //lo_server_add_method(s, "/notes/high", "f", high_handler, NULL);
   lo_server_add_method(s, NULL, NULL, generic_handler, NULL);
 
 
-	int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
+	//int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
 	// int flags = SDL_FULLSCREEN | SDL_OPENGL;
-	//int flags = SDL_OPENGL;
+	int flags = SDL_OPENGL;
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-	SDL_SetVideoMode(1024, 768, 16, flags);
-	// SDL_SetVideoMode(640, 480, 16, flags);
+	// SDL_SetVideoMode(1024, 768, 16, flags);
+	SDL_SetVideoMode(640, 480, 16, flags);
 
 	InitGL ();
-	ReSizeGLScene ( 1024, 768 );
-	// ReSizeGLScene ( 640, 480 );
+	// ReSizeGLScene ( 1024, 768 );
+	ReSizeGLScene ( 640, 480 );
   
-  lua_State *L = lua_open();
+  L = lua_open();
   luaL_openlibs(L);
   tolua_group_open(L);
+  tolua_swarm_open(L);
+  tolua_vmath_open(L);
   luaL_dofile(L, "foo.lua");
 
   lua_getfield(L, LUA_GLOBALSINDEX, "init");
@@ -411,7 +442,10 @@ int main(int argc, char **argv)
 		check_keys(timediff);
     
     lua_getfield(L, LUA_GLOBALSINDEX, "update");
-    lua_pcall(L, 0, 0, 0);
+    if (lua_pcall(L, 0, 0, 0) != 0) {
+      cout << "error in OSCevent: " << lua_tostring(L, -1) << endl;
+      lua_pop(L, 1);
+    }
 		
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
