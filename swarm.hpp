@@ -3,4 +3,6 @@
 
 extern bool keys[512];
 
+float gettime();
+
 #endif

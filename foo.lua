@@ -13,15 +13,22 @@ function init()
   --groups["swarm3"].render = false
   
   groups["swarm2"].pos.x = -30
+  groups["swarm2"].color_off = 2
+  
   groups["swarm3"].pos.x = 30
+  groups["swarm3"].color_off = 4
 end
 
 function update()
   if keys[SDLK_x] then
     groups["swarm1"].speed = 10
+    groups["swarm2"].color_off = 2
   else
     groups["swarm1"].speed = 2
+    groups["swarm2"].color_off = 2
   end
+  groups["swarm3"].color_off = gettime() - 1247877921.5635
+  -- print(" ", gettime())
 end
 
 function OSCevent(path, value)

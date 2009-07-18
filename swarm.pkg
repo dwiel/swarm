@@ -1,3 +1,5 @@
 $cfile "swarm.hpp"
 
 extern bool keys[512];
+
+float gettime();

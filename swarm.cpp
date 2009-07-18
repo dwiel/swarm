@@ -385,6 +385,12 @@ int generic_handler(const char *path, const char *types, lo_arg **argv,
   return 1;
 }
 
+float gettime() {
+  timeval now;
+  gettimeofday(&now, NULL);
+  return now.tv_sec + (now.tv_usec / 1000000.0f);
+}
+
 
 int main(int argc, char **argv)
 {
