@@ -7,7 +7,6 @@ class Scene {
 public:
 	Scene();
 	
-  float zoom;
 	float speed;
   Vector3f pos;
 };

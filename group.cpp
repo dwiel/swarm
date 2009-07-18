@@ -68,17 +68,18 @@ Group::~Group() {
 }
 
 void Group::Draw() {
+  Vector3f end_pos = pos + scene->pos;
   // TODO: adjust group position in opengl transform
   if(render) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(pos.x, pos.y, pos.z);
+    glTranslatef(end_pos.x, end_pos.y, end_pos.z);
     
     for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
       particle* p = *iter;
       float x = p->pos.x;                         // Grab Our Particle X Position
       float y = p->pos.y;                         // Grab Our Particle Y Position
-      float z = p->pos.z + this->scene->zoom;     // Particle Z Pos + Zoom
+      float z = p->pos.z;     // Particle Z Pos + Zoom
       
       glColor4f(p->r, p->g, p->b, p->a);
       

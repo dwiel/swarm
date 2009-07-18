@@ -157,7 +157,7 @@ int InitGL(void) {
 int DrawGLScene(double timediff)							// Here's Where We Do All The Drawing
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear Screen And Depth Buffer
-	glLoadIdentity();						// Reset The ModelView Matrix
+  glLoadIdentity();
 	
   for(set<Group*>::iterator iter = Group::groups.begin(); iter != Group::groups.end(); ++iter) {
     (*iter)->Draw();
@@ -274,22 +274,22 @@ void check_keys (float timediff)
     cout << "color_off: " << groups[0].color_off << endl;
   }
   
-	if (keys[SDLK_z] && keys[SDLK_UP]) {
-    scene.zoom += 1.0f * timediff;				// Zoom In
-    cout << "scene zoom: " << scene.zoom << endl;
-  }
-	if (keys[SDLK_z] && keys[SDLK_DOWN]) {
-    scene.zoom -= 1.0f * timediff;			// Zoom Out
-    cout << "scene zoom: " << scene.zoom << endl;
-  }
-  if (keys[SDLK_z] && keys[SDLK_PAGEUP]) {
-    scene.zoom += 10.0f * timediff;        // Zoom In
-    cout << "scene zoom: " << scene.zoom << endl;
-  }
-  if (keys[SDLK_z] && keys[SDLK_PAGEDOWN]) {
-    scene.zoom -= 10.0f * timediff;      // Zoom Out
-    cout << "scene zoom: " << scene.zoom << endl;
-  }
+// 	if (keys[SDLK_z] && keys[SDLK_UP]) {
+//     scene.zoom += 1.0f * timediff;				// Zoom In
+//     cout << "scene zoom: " << scene.zoom << endl;
+//   }
+// 	if (keys[SDLK_z] && keys[SDLK_DOWN]) {
+//     scene.zoom -= 1.0f * timediff;			// Zoom Out
+//     cout << "scene zoom: " << scene.zoom << endl;
+//   }
+//   if (keys[SDLK_z] && keys[SDLK_PAGEUP]) {
+//     scene.zoom += 10.0f * timediff;        // Zoom In
+//     cout << "scene zoom: " << scene.zoom << endl;
+//   }
+//   if (keys[SDLK_z] && keys[SDLK_PAGEDOWN]) {
+//     scene.zoom -= 10.0f * timediff;      // Zoom Out
+//     cout << "scene zoom: " << scene.zoom << endl;
+//   }
 }
 
 int HandleSDL(SDL_Event *event)
