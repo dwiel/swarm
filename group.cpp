@@ -61,6 +61,7 @@ Group::Group() {
 }
 
 Group::~Group() {
+	delete [] particles;
   delete [] nnIdx;
   delete [] dists;
   
