@@ -34,7 +34,7 @@ Group::Group() {
   stay_in_bounds_weight = 0.0001;
   avoid_touching_weight = 0.01;
   num_particles = 500;
-	decay = 0.1f;
+	decay = -0.1f;
 
   boost::normal_distribution<float> ndist(0, 5);
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);

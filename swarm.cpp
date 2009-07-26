@@ -345,12 +345,18 @@ int mid_handler(const char *path, const char *types, lo_arg **argv, int argc,
 }
 
 // - 1500
-int high_handler(const char *path, const char *types, lo_arg **argv, int argc,
-     void *data, void *user_data)
-{
+int high_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data) {
     groups[0].scene->speed = pow(argv[0]->f, 2.0f) / 1500;
 
     return 0;
+}
+
+int lua_execute_handler(const char *path, const char *types, lo_arg **argv, int argc, void *data, void *user_data) {
+	string str = "";
+	for(int i = 0; i < argc; ++i) {
+		str += argv[i]->s;
+	}
+	luaL_dostring(L, str.c_str());
 }
 
 int generic_handler(const char *path, const char *types, lo_arg **argv,
@@ -399,6 +405,7 @@ int main(int argc, char **argv)
 //   lo_server_add_method(s, "/notes/bass", "f", bass_handler, NULL);
 //   lo_server_add_method(s, "/notes/mid", "f", mid_handler, NULL);
   //lo_server_add_method(s, "/notes/high", "f", high_handler, NULL);
+	lo_server_add_method(s, "/lua/execute", NULL, lua_execute_handler, NULL);
   lo_server_add_method(s, NULL, NULL, generic_handler, NULL);
 
 
