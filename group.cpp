@@ -3,17 +3,16 @@
 #include <GL/gl.h>					// Header File For The OpenGL 
 #include <GL/glu.h>					// Header File For The GLu
 
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
-
 #include <stdlib.h>
 #include <iostream>
+#include <sys/time.h>
 
 #define MAX_KNN_SIZE 10
 
 using namespace std;
 
 set<Group*> Group::groups;
+boost::mt19937 Group::rng;
 
 bool operator<(const ppair& p1, const ppair& p2) {
 	return p1.distance > p2.distance;
@@ -36,7 +35,6 @@ Group::Group() {
   avoid_touching_weight = 0.01;
   num_particles = 500;
 
-  boost::mt19937 rng;
   boost::normal_distribution<float> ndist(0, 5);
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
 

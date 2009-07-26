@@ -6,6 +6,9 @@
 #include <queue>
 #include <vector>
 
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
+
 #include <ANN/ANN.h>          // ANN declarations
 
 #include "vmath.h"
@@ -87,6 +90,8 @@ private:
 
   struct particle* particles;
   int num_particles;
+	
+  static boost::mt19937 rng;
 };
 
 #endif // GROUP_HPP
