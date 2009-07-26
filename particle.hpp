@@ -12,6 +12,8 @@ struct particle {     // Create A Structure For Particle
 	Vector3f pos;
 	Vector3f vel;
 	int zone;          // zone for determining distance
+	
+	float life;
 };
 
 #endif // PARTICLE_HPP

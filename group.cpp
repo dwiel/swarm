@@ -34,6 +34,7 @@ Group::Group() {
   stay_in_bounds_weight = 0.0001;
   avoid_touching_weight = 0.01;
   num_particles = 500;
+	decay = 0.1f;
 
   boost::normal_distribution<float> ndist(0, 5);
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
@@ -43,6 +44,7 @@ Group::Group() {
   for(int i = 0; i < num_particles; ++i) {
     particles[i].active = true;
     particles[i].a = 1.0f;
+		particles[i].life = 1.0f;
     particles[i].pos = Vector3f(normr(), normr(), normr());
     particles[i].vel = Vector3f(normr(), normr(), normr());
     push_back(&particles[i]);
@@ -114,10 +116,12 @@ void Group::Move(float timediff) {
 		gspeed = this->speed * timediff;
 	}
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
+		particle* p = *iter;
 		if (!this->pause_movement) {
-			particle* p = *iter;
 			p->pos += p->vel * gspeed;
 		}
+		
+		p->life -= decay * timediff;
 	}
   
   this->destroyKNN();
@@ -160,6 +164,7 @@ void Group::figureVelocities() {
     p->r = f(color_off);
     p->g = f(color_off - 1);
     p->b = f(color_off - 2);
+		p->a = p->life;
 
 //     p->r = 1;
 //     p->g = 0;

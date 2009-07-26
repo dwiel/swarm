@@ -58,6 +58,7 @@ public:
   float move_to_neighbor_center_weight;
   float stay_in_bounds_weight;
   float avoid_touching_weight;
+	float decay;
   Vector3f pos;
   Scene *scene;
   
