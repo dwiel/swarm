@@ -1,7 +1,9 @@
 
 
-LIBLUA=lua
-#LIBLUA=lua5.1
+# LINUX
+LIBLUA=lua5.1
+# MAC OSX
+#LIBLUA=lua
 
 # LDFLAGS=-arch x86_64
 OBJS = swarm.o group.o scene.o vmath.o tolua_group.o tolua_swarm.o tolua_vmath.o
