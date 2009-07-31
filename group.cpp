@@ -1,7 +1,12 @@
 #include "group.hpp"
 
-#include <GL/gl.h>					// Header File For The OpenGL 
-#include <GL/glu.h>					// Header File For The GLu
+#if defined(__APPLE_CPP__) || defined(__APPLE_CC__) || defined(__MACOS_CLASSIC__) 
+	#include <OpenGL/gl.h>
+	#include <OpenGL/glu.h>
+#else
+	#include <GL/gl.h>					// Header File For The OpenGL 
+	#include <GL/glu.h>					// Header File For The GLu
+#endif
 
 #include <stdlib.h>
 #include <iostream>
