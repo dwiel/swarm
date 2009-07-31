@@ -11,12 +11,12 @@
 #if defined(__APPLE_CPP__) || defined(__APPLE_CC__) || defined(__MACOS_CLASSIC__) 
 	#include <OpenGL/gl.h>
 	#include <OpenGL/glu.h>
-	#include <SDL/SDL.h>
 #else
 	#include <GL/gl.h>					// Header File For The OpenGL 
 	#include <GL/glu.h>					// Header File For The GLu
-	#include "SDL.h"
 #endif
+
+#include "SDL.h"
 
 #include <sys/time.h>
 
