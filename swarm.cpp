@@ -77,12 +77,6 @@ bool keys[512];
 
 Group groups[MAX_GROUPS];
 
-static GLfloat colors[12][3] = {   // Rainbow Of Colors
-	{1.0f,0.5f,0.5f}, {1.0f,0.75f,0.5f}, {1.0f,1.0f,0.5f}, {0.75f,1.0f,0.5f},
-	{0.5f,1.0f,0.5f}, {0.5f,1.0f,0.75f}, {0.5f,1.0f,1.0f}, {0.5f,0.75f,1.0f},
-	{0.5f,0.5f,1.0f}, {0.75f,0.5f,1.0f}, {1.0f,0.5f,1.0f}, {1.0f,0.5f,0.75f}
-};
-
 int HandleSDL ( SDL_Event *event );					// SDL event handler
 
 int LoadGLTextures()							// Load Bitmap And Convert To A Texture
@@ -363,6 +357,8 @@ int lua_execute_handler(const char *path, const char *types, lo_arg **argv, int 
 		str += argv[i]->s;
 	}
 	luaL_dostring(L, str.c_str());
+	
+	return 0;
 }
 
 int generic_handler(const char *path, const char *types, lo_arg **argv,
@@ -485,4 +481,6 @@ int main(int argc, char **argv)
   lua_close(L);
   
   cout << endl;
+
+  return 0;
 }

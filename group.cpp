@@ -161,7 +161,6 @@ float f(float n) {
 }
 
 void Group::figureVelocities() {
-	int cnt = 0;
 	float len;
 	for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
 		particle* p = *iter;

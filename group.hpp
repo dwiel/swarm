@@ -89,7 +89,7 @@ private:
   void destroyKNN();
   void resizeDataPts();
   ANNpointArray   dataPts;        // data points
-  int             dataPtsSize;    // number of data points
+  unsigned int    dataPtsSize;    // number of data points
   ANNpoint        queryPt;        // query point
   ANNidxArray     nnIdx;          // near neighbor indices
   ANNdistArray    dists;          // near neighbor distances
