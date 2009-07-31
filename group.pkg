@@ -25,4 +25,11 @@ public:
   float avoid_touching_weight;
   Vector3f pos;
   Scene *scene;
+  float gridsize;
+  
+  enum RenderType {
+    RT_normal,
+    RT_grid,
+    RT_sphere
+  } rendertype;
 };

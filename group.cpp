@@ -35,6 +35,7 @@ Group::Group() {
   avoid_touching_weight = 0.01;
   num_particles = 500;
 	decay = -0.1f;
+  gridsize = 5.0f;
 
   boost::normal_distribution<float> ndist(0, 5);
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
@@ -78,9 +79,9 @@ void Group::Draw() {
     
     for(vector<particle*>::iterator iter = this->begin(); iter != this->end(); ++iter) {
       particle* p = *iter;
-      float x = p->pos.x;                         // Grab Our Particle X Position
-      float y = p->pos.y;                         // Grab Our Particle Y Position
-      float z = p->pos.z;     // Particle Z Pos + Zoom
+      float x = p->pos.x;
+      float y = p->pos.y;
+      float z = p->pos.z;
       
       glColor4f(p->r, p->g, p->b, p->a);
       
@@ -90,6 +91,22 @@ void Group::Draw() {
       
       vx += p->vel.x*this->vel_render_scale_x;
       vy += p->vel.y*this->vel_render_scale_y;
+      
+      if(rendertype == RT_grid) {
+        // snap to grid
+        x = ((int)(x/gridsize))*gridsize;
+        y = ((int)(y/gridsize))*gridsize;
+        z = ((int)(z/gridsize))*gridsize;
+      } else if(rendertype == RT_sphere) {
+        // snap to sphere
+        Vector3f tmppos = p->pos;
+        tmppos.normalize();
+        tmppos *= ((int)(p->pos.length()/gridsize))*gridsize;
+        x = tmppos.x;
+        y = tmppos.y;
+        z = tmppos.z;
+      } else {
+      }
       
       glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2d(1,1); glVertex3f(x+vx, y+vy,z); // Top Right

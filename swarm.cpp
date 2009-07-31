@@ -397,6 +397,10 @@ float gettime() {
   return now.tv_sec + (now.tv_usec / 1000000.0f);
 }
 
+void setBackgroundColor(float r, float g, float b) {
+  glClearColor(r, g, b, 0.0f);
+}
+
 
 int main(int argc, char **argv)
 {

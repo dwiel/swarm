@@ -61,6 +61,12 @@ public:
 	float decay;
   Vector3f pos;
   Scene *scene;
+  enum RenderType {
+    RT_normal,
+    RT_grid,
+    RT_sphere
+  } rendertype;
+  float gridsize;
   
   static set<Group*> groups;
 
