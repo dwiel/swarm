@@ -25,14 +25,13 @@ function init()
 end
 
 function update()
+  setBackgroundColor(0, 0, 0)
   if keys[SDLK_x] then
     groups["swarm1"].speed = 10
     groups["swarm2"].color_off = 2
-    setBackgroundColor(0, 0, 1)
   else
     groups["swarm1"].speed = 2
     groups["swarm2"].color_off = 2
-    setBackgroundColor(0, 0, 0)
   end
   -- groups["swarm3"].color_off = gettime() - 1247877921.5635
   -- print(" ", gettime())

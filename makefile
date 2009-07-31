@@ -1,9 +1,9 @@
 
 
-LIBLUA=lua
-#LIBLUA=lua5.1
+#LIBLUA=lua
+LIBLUA=lua5.1
 
-LDFLAGS=-arch x86_64
+# LDFLAGS=-arch x86_64
 OBJS = swarm.o group.o scene.o vmath.o tolua_group.o tolua_swarm.o tolua_vmath.o
 CXX = g++
 CXXFLAGS = -Wall -c -O2
@@ -21,6 +21,6 @@ LIBS = -L./lib -L/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/lib -L/opt/local/lib 
 
 # the executable
 swarm: $(OBJS)
-	$(CXX) $(LFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(LFLAGS) -o $@ $^ $(LIBS)
 
 
