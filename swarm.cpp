@@ -93,7 +93,7 @@ int LoadGLTextures()							// Load Bitmap And Convert To A Texture
 	GLubyte *tex = new GLubyte[32 * 32 * 3];
 	FILE *tf;
 
-	tf = fopen ( "/home/dwiel/swarm/data/particle.raw", "rb" );
+	tf = fopen ( "data/particle.raw", "rb" );
 	size_t ret = fread ( tex, 1, 32 * 32 * 3, tf );
 	fclose ( tf );
   
