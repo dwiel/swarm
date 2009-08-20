@@ -18,6 +18,10 @@
 
 using namespace std;
 
+struct Color {
+	float r, g, b;
+};
+
 struct ppair {
 	float distance;
 	particle* point;
@@ -67,8 +71,11 @@ public:
     RT_sphere
   } rendertype;
   float gridsize;
+	Color color;
   
   static set<Group*> groups;
+  
+  particle* get_particle(int i);
 
 private:
   // internal functions

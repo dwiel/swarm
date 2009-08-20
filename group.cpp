@@ -182,9 +182,15 @@ void Group::figureVelocities() {
 //     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
 //     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
     
-    p->r = f(color_off);
-    p->g = f(color_off - 1);
-    p->b = f(color_off - 2);
+		if(color_off >= 0) {
+			p->r = f(color_off);
+			p->g = f(color_off - 1);
+			p->b = f(color_off - 2);
+		} else {
+			p->r = color.r;
+			p->g = color.g;
+			p->b = color.b;
+		}
 		p->a = p->life;
 
 //     p->r = 1;
@@ -301,6 +307,12 @@ void Group::getNNearestNeighbors(vector<ppair>* neighbors, particle* p1, int num
     (*neighbors)[i].point = (*this)[this->nnIdx[i]];
   }
 }
+
+
+particle* Group::get_particle(int i) {
+  return (*this)[i];
+}
+
 
 // // return a list of all neighbors to point p1 which are most max_dist away 
 // // sorted by proximity 

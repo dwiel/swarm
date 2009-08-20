@@ -1,6 +1,11 @@
 $cfile "group.hpp"
+$cfile "particle.hpp"
 
-class Group {
+struct Color {
+	float r, g, b;
+}
+
+class Group : public Vector<particle*> {
 public:
   Group();
   ~Group();
@@ -26,6 +31,9 @@ public:
   Vector3f pos;
   Scene *scene;
   float gridsize;
+	Color color;
+  
+  particle* get_particle(int i);
   
   enum RenderType {
     RT_normal,

@@ -6,5 +6,7 @@ extern bool keys[512];
 float gettime();
 
 void setBackgroundColor(float r, float g, float b);
+void saveTGA();
+void saveTGA_init();
 
 #endif

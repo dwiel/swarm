@@ -3,7 +3,11 @@
 
 #include "vmath.h"
 
-struct particle {     // Create A Structure For Particle
+class particle {     // Create A Structure For Particle
+public:
+  particle();
+  ~particle();
+  
 	bool	active;      // Active (Yes/No)
 	float	r;
 	float	g;

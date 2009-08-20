@@ -48,6 +48,7 @@ extern "C" {
 #include <tolua++.h>
 #include "tolua_group.h"
 #include "tolua_swarm.h"
+#include "tolua_particle.h"
 #include "tolua_vmath.h"
 
 lua_State *L;
@@ -73,6 +74,13 @@ GLuint	texture[1];                // Storage For Our Particle Texture
 
 bool keys[512];
 
+int window_width = 400;
+int window_height = 300;
+
+// TGA
+GLubyte *pixels;
+int shot_num;
+
 #define MAX_GROUPS 0
 
 Group groups[MAX_GROUPS];
@@ -85,7 +93,7 @@ int LoadGLTextures()							// Load Bitmap And Convert To A Texture
 	GLubyte *tex = new GLubyte[32 * 32 * 3];
 	FILE *tf;
 
-	tf = fopen ( "data/particle.raw", "rb" );
+	tf = fopen ( "/home/dwiel/swarm/data/particle.raw", "rb" );
 	size_t ret = fread ( tex, 1, 32 * 32 * 3, tf );
 	fclose ( tf );
   
@@ -149,6 +157,8 @@ int InitGL(void) {
     (*iter)->scene = &scene;
     (*iter)->controlled = true;
   }
+  
+  saveTGA_init();
 	
 	// Initialization Went OK
 	return 1;
@@ -165,6 +175,8 @@ int DrawGLScene(double timediff)							// Here's Where We Do All The Drawing
 	
 	SDL_GL_SwapBuffers ();
 
+  saveTGA();
+
 	return 1;									// Everything Went OK
 }
 
@@ -172,12 +184,62 @@ void print_debug() {
 //   printf("number of 0s"
 }
 
+void saveTGA_init() {
+  int nSize = window_width * window_height * 3;
+  pixels = new GLubyte [nSize];
+  shot_num = 0;
+}
+
+void saveTGA_destroy() {
+  delete [] pixels;
+}
+
+//this will save a TGA in the screenshots
+//folder under incrementally numbered files
+void saveTGA() {
+  int nSize = window_width * window_height * 3;
+
+  glPixelStorei(GL_PACK_ALIGNMENT,1);
+
+  char cFileName[64];
+  FILE *fScreenshot;
+
+  if (pixels == NULL) return;    
+  
+  sprintf(cFileName,"screenshots/screenshot_%d.tga",shot_num); 
+  fScreenshot = fopen(cFileName,"wb");
+  
+  glReadPixels(0, 0, window_width, window_height, GL_RGB, 
+  GL_UNSIGNED_BYTE, pixels);
+          
+  //convert to BGR format    
+  unsigned char temp;
+  int i = 0;
+  while (i < nSize) {
+    temp = pixels[i];       //grab blue
+    pixels[i] = pixels[i+2];//assign red to blue
+    pixels[i+2] = temp;     //assign blue to red
+
+    i += 3;     //skip to next blue byte
+  }
+
+  unsigned char TGAheader[12]={0,0,2,0,0,0,0,0,0,0,0,0};
+  unsigned char header[6] = {window_width%256,window_width/256,
+  window_height%256,window_height/256,24,0};
+  
+  fwrite(TGAheader, sizeof(unsigned char), 12, fScreenshot);
+  fwrite(header, sizeof(unsigned char), 6, fScreenshot);
+  fwrite(pixels, sizeof(GLubyte), nSize, fScreenshot);
+  fclose(fScreenshot);
+  
+  shot_num++;
+}
+
+
 void check_keys (float timediff)
 {
   if(keys[SDLK_SPACE]) luaL_dofile(L, "foo.lua");
   
-  if (keys[SDLK_d]) print_debug();
-
   // maybe wait and do this in Lua or python ...
   // controls.push_back(Control(&scene.speed, "scene speed", Linear(SDLK_s, 0.1f));
   
@@ -415,24 +477,25 @@ int main(int argc, char **argv)
   lo_server_add_method(s, NULL, NULL, generic_handler, NULL);
 
 
-	//int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
+	// int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
 	// int flags = SDL_FULLSCREEN | SDL_OPENGL;
 	int flags = SDL_OPENGL;
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-	// SDL_SetVideoMode(1024, 768, 16, flags);
-	SDL_SetVideoMode(640, 480, 16, flags);
+	SDL_SetVideoMode(window_width, window_height, 16, flags);
+	// SDL_SetVideoMode(640, 480, 16, flags);
 
 	InitGL ();
-	// ReSizeGLScene ( 1024, 768 );
-	ReSizeGLScene ( 640, 480 );
+	ReSizeGLScene ( window_width, window_height );
+	// ReSizeGLScene ( 640, 480 );
   
   L = lua_open();
   luaL_openlibs(L);
   tolua_group_open(L);
   tolua_swarm_open(L);
   tolua_vmath_open(L);
+  tolua_particle_open(L);
   luaL_dofile(L, "foo.lua");
 
   lua_getfield(L, LUA_GLOBALSINDEX, "init");
@@ -476,6 +539,8 @@ int main(int argc, char **argv)
     
     lo_server_recv_noblock(s, 0);
 	}
+  
+  saveTGA_destroy();
 
 	SDL_Quit();
   lua_close(L);
