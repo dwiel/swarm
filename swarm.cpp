@@ -206,7 +206,7 @@ void saveTGA() {
 
   if (pixels == NULL) return;    
   
-  sprintf(cFileName,"screenshots/screenshot_%d.tga",shot_num); 
+  sprintf(cFileName,"screenshots/screenshot_%08d.tga",shot_num); 
   fScreenshot = fopen(cFileName,"wb");
   
   glReadPixels(0, 0, window_width, window_height, GL_RGB, 
