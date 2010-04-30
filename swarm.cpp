@@ -76,10 +76,10 @@ bool keys[512];
 
 // int window_width = 400;
 // int window_height = 300;
-// int window_width = 1024;
-// int window_height = 768;
-int window_width = 800;
-int window_height = 600;
+int window_width = 1024;
+int window_height = 768;
+// int window_width = 800;
+// int window_height = 600;
 
 // TGA
 GLubyte *pixels;

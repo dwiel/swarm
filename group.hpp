@@ -74,6 +74,7 @@ public:
   float radius;
 	Color color;
   float alpha;
+  int swarm_number;
   
   static set<Group*> groups;
   

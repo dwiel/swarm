@@ -44,6 +44,7 @@ Group::Group() {
   gridsize = 5.0f;
   radius = 10.0f;
   alpha = 0.0f;
+  swarm_number = 0;
 
   boost::normal_distribution<float> ndist(0, 5);
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
