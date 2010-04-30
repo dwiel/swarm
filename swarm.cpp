@@ -74,8 +74,12 @@ GLuint	texture[1];                // Storage For Our Particle Texture
 
 bool keys[512];
 
-int window_width = 400;
-int window_height = 300;
+// int window_width = 400;
+// int window_height = 300;
+// int window_width = 1024;
+// int window_height = 768;
+int window_width = 800;
+int window_height = 600;
 
 // TGA
 GLubyte *pixels;
@@ -158,7 +162,7 @@ int InitGL(void) {
     (*iter)->controlled = true;
   }
   
-  saveTGA_init();
+//   saveTGA_init();
 	
 	// Initialization Went OK
 	return 1;
@@ -175,7 +179,7 @@ int DrawGLScene(double timediff)							// Here's Where We Do All The Drawing
 	
 	SDL_GL_SwapBuffers ();
 
-  saveTGA();
+//   saveTGA();
 
 	return 1;									// Everything Went OK
 }
@@ -465,6 +469,13 @@ void setBackgroundColor(float r, float g, float b) {
   glClearColor(r, g, b, 0.0f);
 }
 
+void sendOSC(float data) {
+//   lo_address t;
+//   
+//   t = lo_address_new("192.168.1.67", "57122");
+//   lo_send(t, "/fm/set", "i", (int)data);
+  //cout << "/fm/set" << " " << data << endl;
+}
 
 int main(int argc, char **argv)
 {
@@ -475,8 +486,7 @@ int main(int argc, char **argv)
   //lo_server_add_method(s, "/notes/high", "f", high_handler, NULL);
 	lo_server_add_method(s, "/lua/execute", NULL, lua_execute_handler, NULL);
   lo_server_add_method(s, NULL, NULL, generic_handler, NULL);
-
-
+  
 	// int flags = SDL_DOUBLEBUF | SDL_FULLSCREEN | SDL_OPENGL;
 	// int flags = SDL_FULLSCREEN | SDL_OPENGL;
 	int flags = SDL_OPENGL;
@@ -540,7 +550,7 @@ int main(int argc, char **argv)
     lo_server_recv_noblock(s, 0);
 	}
   
-  saveTGA_destroy();
+//   saveTGA_destroy();
 
 	SDL_Quit();
   lua_close(L);

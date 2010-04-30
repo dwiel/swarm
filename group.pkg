@@ -2,7 +2,7 @@ $cfile "group.hpp"
 $cfile "particle.hpp"
 
 struct Color {
-	float r, g, b;
+  float r, g, b;
 }
 
 class Group : public Vector<particle*> {
@@ -31,7 +31,9 @@ public:
   Vector3f pos;
   Scene *scene;
   float gridsize;
-	Color color;
+  float radius;
+  Color color;
+  float alpha;
   
   particle* get_particle(int i);
   

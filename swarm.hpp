@@ -9,4 +9,6 @@ void setBackgroundColor(float r, float g, float b);
 void saveTGA();
 void saveTGA_init();
 
+void sendOSC(float data);
+
 #endif

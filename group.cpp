@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <sys/time.h>
+#include <stdio.h>
 
 #define MAX_KNN_SIZE 10
 
@@ -41,6 +42,8 @@ Group::Group() {
   num_particles = 500;
 	decay = -0.1f;
   gridsize = 5.0f;
+  radius = 10.0f;
+  alpha = 0.0f;
 
   boost::normal_distribution<float> ndist(0, 5);
   boost::variate_generator<boost::mt19937&, boost::normal_distribution<float> > normr(rng, ndist);
@@ -88,7 +91,8 @@ void Group::Draw() {
       float y = p->pos.y;
       float z = p->pos.z;
       
-      glColor4f(p->r, p->g, p->b, p->a);
+//       glColor4f(p->r, p->g, p->b, p->a);
+      glColor4f(p->r, p->g, p->b, this->alpha);
       
       // optionally elongate particles based on velocity
       float vx = this->render_base_size_x;
@@ -182,7 +186,7 @@ void Group::figureVelocities() {
 //     p->g = p->vel.x*f(color_off - 1) + p->vel.y*f(color_off - 2) + p->vel.z*f(color_off);
 //     p->b = p->vel.x*f(color_off - 2) + p->vel.y*f(color_off)     + p->vel.z*f(color_off - 1);
     
-		if(color_off >= 0) {
+/*		if(color_off >= 0) {
 			p->r = f(color_off);
 			p->g = f(color_off - 1);
 			p->b = f(color_off - 2);
@@ -190,7 +194,7 @@ void Group::figureVelocities() {
 			p->r = color.r;
 			p->g = color.g;
 			p->b = color.b;
-		}
+		}*/
 		p->a = p->life;
 
 //     p->r = 1;
@@ -227,8 +231,8 @@ Vector3f Group::avoidTouching(particle* p) {
 Vector3f Group::stayInBounds(particle* p) {
   Vector3f dist = p->pos;
 	float len = dist.length();
-	if(len > 10) {
-		return -dist * (len - 10);
+	if(len > this->radius) {
+		return -dist * (len - this->radius);
 	} else {
     return Vector3f(0,0,0);
   }

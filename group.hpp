@@ -71,7 +71,9 @@ public:
     RT_sphere
   } rendertype;
   float gridsize;
+  float radius;
 	Color color;
+  float alpha;
   
   static set<Group*> groups;
   

@@ -6,3 +6,4 @@ float gettime();
 
 void setBackgroundColor(float r, float g, float b);
 
+void sendOSC(float data);
